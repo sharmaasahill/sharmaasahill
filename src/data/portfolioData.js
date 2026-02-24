@@ -32,9 +32,9 @@ export const aboutData = {
     objective: 'Most developers focus on the code. I focus on the outcome. Every project I take on starts with one question -> What does the end user actually need? That thinking shapes everything I build. Clean architecture, smart tech choices, and shipping something that matters.',
     highlights: [
         { label: 'Experience', value: '2+ Years' },
-        { label: 'Projects', value: '23+' },
-        { label: 'Tech Stack', value: '15+' },
-        { label: 'Clients', value: '5+' },
+        { label: 'Projects', value: '15+' },
+        { label: 'Tech Stack', value: '10+' },
+        { label: 'Clients', value: '20+' },
     ],
 };
 

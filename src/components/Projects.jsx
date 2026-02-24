@@ -90,7 +90,7 @@ export default function Projects() {
                         My <span className="gradient-text">Projects</span>
                     </h2>
                     <p className="section-subtitle">
-                        A selection of my recent work — from full-stack apps to APIs and beyond
+                        A selection of my recent work, from full-stack apps to APIs and beyond
                     </p>
                 </AnimatedSection>
 

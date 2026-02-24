@@ -36,10 +36,11 @@ export default function About() {
                     <p className="section-subtitle">Get to know who I am and what drives me</p>
                 </AnimatedSection>
 
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     {/* Left — Text */}
                     <AnimatedSection>
                         <div className="space-y-6">
+
                             <div className="glass-card p-6 md:p-8">
                                 <h3 className="text-lg font-semibold text-dark-900 dark:text-white mb-3 flex items-center gap-2">
                                     <span className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
@@ -66,26 +67,29 @@ export default function About() {
                         </div>
                     </AnimatedSection>
 
-                    {/* Right — Stats grid */}
+                    {/* Right — Profile pic + Stats */}
                     <AnimatedSection>
-                        <div className="grid grid-cols-2 gap-4">
-                            {aboutData.highlights.map((item, i) => {
-                                const Icon = iconMap[i];
-                                return (
-                                    <motion.div
-                                        key={item.label}
-                                        whileHover={{ y: -4, scale: 1.02 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="glass-card p-6 text-center group cursor-default"
-                                    >
-                                        <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary-500 transition-colors duration-300">
-                                            <Icon className="text-primary-500 group-hover:text-white transition-colors duration-300" size={22} />
-                                        </div>
-                                        <p className="text-2xl md:text-3xl font-bold gradient-text mb-1">{item.value}</p>
-                                        <p className="text-sm text-dark-500 dark:text-dark-400 font-medium">{item.label}</p>
-                                    </motion.div>
-                                );
-                            })}
+                        <div className="flex flex-col items-center gap-8">
+                            {/* Stats grid */}
+                            <div className="grid grid-cols-2 gap-4 w-full">
+                                {aboutData.highlights.map((item, i) => {
+                                    const Icon = iconMap[i];
+                                    return (
+                                        <motion.div
+                                            key={item.label}
+                                            whileHover={{ y: -4, scale: 1.02 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="glass-card p-6 text-center group cursor-default"
+                                        >
+                                            <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary-500 transition-colors duration-300">
+                                                <Icon className="text-primary-500 group-hover:text-white transition-colors duration-300" size={22} />
+                                            </div>
+                                            <p className="text-2xl md:text-3xl font-bold gradient-text mb-1">{item.value}</p>
+                                            <p className="text-sm text-dark-500 dark:text-dark-400 font-medium">{item.label}</p>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </AnimatedSection>
                 </div>

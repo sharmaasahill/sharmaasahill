@@ -140,10 +140,7 @@ export default function Hero() {
                             {/* Profile circle */}
                             <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 p-1 animate-float">
                                 <div className="w-full h-full rounded-full bg-dark-50 dark:bg-dark-900 flex items-center justify-center overflow-hidden">
-                                    {/* Initials as placeholder — replace with your image */}
-                                    <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold gradient-text select-none">
-                                        SS
-                                    </span>
+                                    <img src="/Profile-Sahil.jpeg" alt="Sahil Sharma" className="w-full h-full object-cover scale-100 object-[center_2%]" />
                                 </div>
                             </div>
 
