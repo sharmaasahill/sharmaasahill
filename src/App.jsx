@@ -1,4 +1,5 @@
 import { ThemeProvider } from './context/ThemeContext';
+import { motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -9,11 +10,20 @@ import Services from './components/Services';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import CustomCursor from './components/CustomCursor';
+import ParticleBackground from './components/ParticleBackground';
 
 function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen">
+      <CustomCursor />
+      <ParticleBackground />
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="min-h-screen"
+      >
         <Navbar />
         <Hero />
         <About />
@@ -24,7 +34,7 @@ function App() {
         <Contact />
         <Footer />
         <ScrollToTop />
-      </div>
+      </motion.div>
     </ThemeProvider>
   );
 }
