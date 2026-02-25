@@ -34,7 +34,7 @@ export const aboutData = {
         { label: 'Experience', value: '2+ Years' },
         { label: 'Projects', value: '15+' },
         { label: 'Tech Stack', value: '10+' },
-        { label: 'Clients', value: '20+' },
+        { label: 'Clients', value: '10+' },
     ],
 };
 
