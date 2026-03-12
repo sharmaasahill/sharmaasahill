@@ -1,110 +1,102 @@
 <div align="center">
 
-<!-- Animated Typing Header -->
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&pause=1000&color=7C3AED&center=true&vCenter=true&width=600&lines=Hey+there%2C+I'm+Sahil+Kumar+Sharma+%F0%9F%91%8B;Full+Stack+Developer;UI+%2F+UX+Enthusiast;Always+building+something+new+%F0%9F%9A%80" alt="Typing SVG" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=Sahil%20Sharma&fontSize=60&fontAlignY=35&desc=Full%20Stack%20Developer%20%E2%80%A2%20UI%2FUX%20Enthusiast%20%E2%80%A2%20Problem%20Solver&descAlignY=55&descSize=16&fontColor=fff&animation=fadeIn" />
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&pause=1200&color=00D9FF&center=true&vCenter=true&width=560&lines=Available+for+freelance+projects+%F0%9F%9F%A2;Building+fast%2C+beautiful+web+apps+%F0%9F%9A%80;React+%7C+Node.js+%7C+Python+%7C+TypeScript;Turning+ideas+into+digital+reality+%E2%9C%A8" alt="Typing SVG" />
 
 <br/>
 
-<p>
-  <a href="https://sharmaasahill.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/Portfolio-sharmaasahill.vercel.app-7c3aed?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio" />
-  </a>
-  &nbsp;
-  <a href="https://www.linkedin.com/in/sharmaasahill/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-sharmaasahill-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
-  </a>
-  &nbsp;
-  <a href="mailto:i.sahilkrsharma@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-i.sahilkrsharma@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
-  </a>
-</p>
-
-<!-- Visitor Badge -->
-<img src="https://komarev.com/ghpvc/?username=sharmaasahill&label=Profile+Views&color=7c3aed&style=flat-square" alt="Profile views" />
+[![Portfolio](https://img.shields.io/badge/%F0%9F%8C%90_Portfolio-sharmaasahill.vercel.app-00D9FF?style=for-the-badge&labelColor=0a0a0a)](https://sharmaasahill.vercel.app/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0a0a0a)](https://www.linkedin.com/in/sharmaasahill/)
+[![Email](https://img.shields.io/badge/Gmail-Hire_Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0a0a0a)](mailto:i.sahilkrsharma@gmail.com)
 
 </div>
 
 ---
 
-## 👨‍💻 About Me
+### `> whoami`
 
-```ts
-const sahil = {
-  name      : "Sahil Kumar Sharma",
-  location  : "Chennai, Tamil Nadu 🇮🇳",
-  education : "ITER, Siksha 'O' Anusandhan University",
-  portfolio : "https://sharmaasahill.vercel.app/",
-  passions  : ["Building cool UIs", "Solving real problems", "Open source"],
-  currently : "Crafting pixel-perfect, performant web experiences ✨",
-};
+```yaml
+name      : Sahil Kumar Sharma
+alias     : sharmaasahill
+location  : Chennai, Tamil Nadu, India 🇮🇳
+edu       : ITER — Siksha 'O' Anusandhan University
+role      : Full Stack Developer
+status    : Open to freelance & collaboration 🟢
+portfolio : sharmaasahill.vercel.app
+passion   : Shipping pixel-perfect, production-ready apps
 ```
 
 ---
 
-## 🛠️ Tech Stack
+### What I Do
+
+```
+🎨  Craft stunning UIs with React, Tailwind CSS & Framer Motion
+🔧  Build robust backends with Node.js and RESTful APIs
+🐍  Automate workflows & data pipelines with Python
+📱  Develop responsive, accessible, cross-browser web apps
+🚀  Deploy to Vercel, Netlify, and cloud platforms
+```
+
+---
+
+### Tech Arsenal
 
 <div align="center">
 
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
+**Frontend**
+
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Next.js](https://img.shields.io/badge/Next.js-ffffff?style=flat-square&logo=nextdotjs&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white)
+
+**Backend & Tools**
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
 </div>
 
 ---
 
-## 📊 GitHub Stats
+### Contribution Snake
 
 <div align="center">
 
-<img height="180em" src="https://github-readme-stats.vercel.app/api?username=sharmaasahill&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true&border_radius=12&hide_border=true&bg_color=0d1117&title_color=7c3aed&icon_color=c084fc&text_color=e2e8f0" />
-&nbsp;
-<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=sharmaasahill&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=7c3aed&text_color=e2e8f0&border_radius=12" />
-
-</div>
-
-<div align="center">
-
-<img src="https://streak-stats.demolab.com?user=sharmaasahill&theme=tokyonight&hide_border=true&background=0d1117&ring=7c3aed&fire=c084fc&currStreakLabel=7c3aed&border_radius=12" alt="GitHub Streak" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sharmaasahill/sharmaasahill/output/github-contribution-grid-snake-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sharmaasahill/sharmaasahill/output/github-contribution-grid-snake.svg" />
+  <img alt="GitHub Snake" src="https://raw.githubusercontent.com/sharmaasahill/sharmaasahill/output/github-contribution-grid-snake.svg" />
+</picture>
 
 </div>
 
 ---
 
-## 🚀 Featured Project
+### Let's Connect
 
 <div align="center">
 
-[![Portfolio Card](https://github-readme-stats.vercel.app/api/pin/?username=sharmaasahill&repo=sharmaasahill&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=7c3aed&icon_color=c084fc&text_color=e2e8f0&border_radius=12)](https://sharmaasahill.vercel.app/)
-
-**🔗 [Live → sharmaasahill.vercel.app](https://sharmaasahill.vercel.app/)**
-
-</div>
-
----
-
-## 📬 Connect with Me
-
-<div align="center">
-
-| Platform | Link |
-|----------|------|
-| 🌐 Portfolio | [sharmaasahill.vercel.app](https://sharmaasahill.vercel.app/) |
-| 💼 LinkedIn | [in/sharmaasahill](https://www.linkedin.com/in/sharmaasahill/) |
-| 📸 Instagram | [@sharmaasahill](https://www.instagram.com/sharmaasahill/) |
-| 📘 Facebook | [sharmakrsahil](https://www.facebook.com/sharmakrsahil/) |
-| 📧 Email | [i.sahilkrsharma@gmail.com](mailto:i.sahilkrsharma@gmail.com) |
+| 🌐 Portfolio | 💼 LinkedIn | 📸 Instagram | 📧 Email |
+|:---:|:---:|:---:|:---:|
+| [sharmaasahill.vercel.app](https://sharmaasahill.vercel.app/) | [in/sharmaasahill](https://www.linkedin.com/in/sharmaasahill/) | [@sharmaasahill](https://www.instagram.com/sharmaasahill/) | [i.sahilkrsharma@gmail.com](mailto:i.sahilkrsharma@gmail.com) |
 
 </div>
 
 ---
 
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=7c3aed&height=80&section=footer" />
+
+*"Code is like humor. When you have to explain it, it's bad."* — Cory House
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" />
+
 </div>
