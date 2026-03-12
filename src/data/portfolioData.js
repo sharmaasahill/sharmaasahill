@@ -23,7 +23,7 @@ export const heroData = {
     name: 'Sahil Sharma',
     title: 'Full Stack Developer & Freelancer',
     tagline: 'I build fast, scalable web applications that look great and work even better. Whether you need a complete product or a single feature, I take it from idea to launch.',
-    resumeUrl: '/src/assets/Sahil-Sharma-SDE.pdf',
+    resumeUrl: '/_Sahil_Sharma_SDE.pdf',
 };
 
 /* ── About ────────────────────────────────────────────────────── */

@@ -86,8 +86,8 @@ export default function Hero() {
                             </Link>
 
                             <a
-                                href="/Sahil-Sharma-SDE.pdf"
-                                download="Sahil-Sharma-SDE.pdf"
+                                href={heroData.resumeUrl}
+                                download="_Sahil_Sharma_SDE.pdf"
                                 className="btn-outline"
                             >
                                 <FiDownload /> Download Resume
