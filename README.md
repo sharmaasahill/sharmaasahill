@@ -19,9 +19,9 @@
 ```yaml
 name      : Sahil Kumar Sharma
 alias     : sharmaasahill
-location  : Chennai, Tamil Nadu, India 🇮🇳
-edu       : ITER — Siksha 'O' Anusandhan University
-role      : Full Stack Developer
+location  : India 🇮🇳
+edu       : ITER, Siksha 'O' Anusandhan University
+role      : Software Developer
 status    : Open to freelance & collaboration 🟢
 portfolio : sharmaasahill.vercel.app
 passion   : Shipping pixel-perfect, production-ready apps
@@ -32,11 +32,11 @@ passion   : Shipping pixel-perfect, production-ready apps
 ### What I Do
 
 ```
-🎨  Craft stunning UIs with React, Tailwind CSS & Framer Motion
-🔧  Build robust backends with Node.js and RESTful APIs
-🐍  Automate workflows & data pipelines with Python
-📱  Develop responsive, accessible, cross-browser web apps
-🚀  Deploy to Vercel, Netlify, and cloud platforms
+  Craft stunning UIs with React, Tailwind CSS & Framer Motion
+  Build robust backends with Node.js and RESTful APIs
+  Automate workflows & data pipelines with Python
+  Develop responsive, accessible, cross-browser web apps
+  Deploy to Vercel, Netlify, and cloud platforms
 ```
 
 ---

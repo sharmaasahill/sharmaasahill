@@ -8,6 +8,9 @@ on:
     branches:
       - main # Runs whenever you push to main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
