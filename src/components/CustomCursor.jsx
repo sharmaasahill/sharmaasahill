@@ -7,13 +7,16 @@ export default function CustomCursor() {
     const hovered = useRef(false);
     const hoveredEl = useRef(null);
 
-    const springCfg = { damping: 28, stiffness: 350, mass: 0.4 };
+    const springCfg = { damping: 35, stiffness: 700, mass: 0.1 };
     const sx = useSpring(cursorX, springCfg);
     const sy = useSpring(cursorY, springCfg);
 
     const onMove = useCallback((e) => {
-        cursorX.set(e.clientX);
-        cursorY.set(e.clientY);
+        // Use requestAnimationFrame for smoother updates that sync with the screen refresh
+        requestAnimationFrame(() => {
+            cursorX.set(e.clientX);
+            cursorY.set(e.clientY);
+        });
     }, [cursorX, cursorY]);
 
     useEffect(() => {
