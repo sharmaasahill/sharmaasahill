@@ -40,10 +40,10 @@ Building scalable products and open to meaningful collaborations.
 ---
 
 ### Get in Touch
-- 📧 Email: i.sahilkrsharma@gmail.com
-- 🔗 LinkedIn: https://linkedin.com/in/sharmaasahill
-- 💻 Portfolio: https://sharmaasahill.vercel.app/
-- 🐙 GitHub: https://github.com/sharmaasahill
+- Email: i.sahilkrsharma@gmail.com
+- LinkedIn: https://linkedin.com/in/sharmaasahill
+- Portfolio: https://sharmaasahill.vercel.app/
+- GitHub: https://github.com/sharmaasahill
 
 ---
 

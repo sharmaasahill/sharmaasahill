@@ -226,11 +226,11 @@ export const services = [
 /* ── Contact / Socials ────────────────────────────────────────── */
 export const contactInfo = {
     email: 'i.sahilkrsharma@gmail.com',
-    phone: '+91 98765 43210',
+    phone: '+91 8521900395',
     socials: [
         { name: 'GitHub', url: 'https://github.com/sharmaasahill', icon: FaGithub },
         { name: 'LinkedIn', url: 'https://www.linkedin.com/in/sharmaasahill/', icon: FaLinkedin },
-        { name: 'WhatsApp', url: 'https://api.whatsapp.com/qr/DJRKRNUD3AXCB1?autoload=1&app_absent=0', icon: FaWhatsapp },
+        { name: 'WhatsApp', url: 'https://wa.me/918521900395', icon: FaWhatsapp },
         { name: 'Instagram', url: 'https://www.instagram.com/sharmaasahill/', icon: FaInstagram },
         { name: 'Email', url: 'mailto:i.sahilkrsharma@gmail.com', icon: FaEnvelope },
     ],
