@@ -1,50 +1,23 @@
 import { useRef, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-scroll';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { gsap } from '../lib/gsap';
 import MagneticButton from './MagneticButton';
 import { heroData, contactInfo } from '../data/portfolioData';
 
-const ROLES = ['Full Stack Developer', 'Backend Engineer', 'Freelancer', 'Problem Solver'];
-
-function useTypewriter(words, speed = 80, pause = 2200) {
-  const [display, setDisplay] = useState('');
-  
-  useEffect(() => {
-    let timeout;
-    let wi = 0; let ci = 0; let isDel = false;
-
-    const tick = () => {
-      const word = words[wi % words.length];
-      if (!isDel && ci <= word.length) {
-        setDisplay(word.slice(0, ci));
-        ci++;
-        timeout = setTimeout(tick, speed);
-      } else if (!isDel && ci > word.length) {
-        isDel = true;
-        timeout = setTimeout(tick, pause);
-      } else if (isDel && ci > 0) {
-        setDisplay(word.slice(0, ci - 1));
-        ci--;
-        timeout = setTimeout(tick, speed / 2);
-      } else {
-        isDel = false;
-        wi++;
-        ci = 0;
-        timeout = setTimeout(tick, speed);
-      }
-    };
-
-    timeout = setTimeout(tick, speed);
-    return () => clearTimeout(timeout);
-  }, [words, speed, pause]);
-
-  return display;
-}
+const ROLES = ['Product Engineer', 'Systems Engineer', 'Problem Solver'];
 
 export default function Hero() {
   const ref = useRef(null);
-  const role = useTypewriter(ROLES);
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % ROLES.length);
+    }, 2600);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -52,7 +25,7 @@ export default function Hero() {
       tl.fromTo('.h-badge',   { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.2)
         .fromTo('.h-eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.4)
         .fromTo('.h-name',    { y: 60, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 1.0 }, 0.55)
-        .fromTo('.h-role',    { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7 }, 0.9)
+        .fromTo('.h-role',    { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, 0.9)
         .fromTo('.h-tagline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 1.05)
         .fromTo('.h-actions', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.2)
         .fromTo('.h-socials', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.35)
@@ -90,13 +63,24 @@ export default function Hero() {
             {heroData.name}
           </h1>
 
-          {/* Role */}
-          <div className="h-role flex items-center gap-3 mb-8">
-            <div style={{ width: 28, height: 1, background: 'var(--accent)', opacity: 0.45 }} />
-            <span className="font-heading font-medium text-xl md:text-2xl" style={{ color: 'var(--text2)', minWidth: '22ch' }}>
-              Product Engineer
-              <span className="inline-block w-0.5 h-6 ml-0.5 align-middle animate-blink" style={{ background: 'var(--accent)' }} />
-            </span>
+          {/* Rotating Role Tiles */}
+          <div className="h-role flex items-center gap-3 mb-8 overflow-hidden" style={{ minWidth: '22ch', height: '42px' }}>
+            <div style={{ width: 28, height: 1, background: 'var(--accent)', opacity: 0.45, flexShrink: 0 }} />
+            <div className="font-heading font-medium text-xl md:text-2xl flex items-center" style={{ color: 'var(--text2)' }}>
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={roleIndex}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="inline-block whitespace-nowrap"
+                >
+                  {ROLES[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
+              <span className="inline-block w-0.5 h-6 ml-2 align-middle animate-blink" style={{ background: 'var(--accent)', flexShrink: 0 }} />
+            </div>
           </div>
 
           <p className="h-tagline section-body mb-12 max-w-lg" style={{ color: '#d1d5db' }}>{heroData.tagline}</p>
