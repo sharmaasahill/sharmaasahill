@@ -4,6 +4,8 @@ import { Link } from 'react-scroll';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { gsap } from '../lib/gsap';
 import MagneticButton from './MagneticButton';
+import useMouseParallax from '../hooks/useMouseParallax';
+import useMediaQuery from '../hooks/useMediaQuery';
 import { heroData, contactInfo } from '../data/portfolioData';
 
 const ROLES = ['Product Engineer', 'Systems Engineer', 'Problem Solver'];
@@ -11,6 +13,8 @@ const ROLES = ['Product Engineer', 'Systems Engineer', 'Problem Solver'];
 export default function Hero() {
   const ref = useRef(null);
   const [roleIndex, setRoleIndex] = useState(0);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const parallax = useMouseParallax(isMobile ? 0 : 0.012);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,7 +41,15 @@ export default function Hero() {
   return (
     <section id="hero" ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="section-container w-full">
-        <div className="max-w-3xl">
+        {/* Parallax wrapper — very subtle depth shift */}
+        <div
+          className="max-w-3xl"
+          style={{
+            transform: `translate(${parallax.x * 18}px, ${parallax.y * 12}px)`,
+            transition: 'transform 0.1s linear',
+            willChange: 'transform',
+          }}
+        >
           {/* Status */}
           <div className="h-badge flex items-center gap-2.5 mb-10">
             <span className="status-dot" />
@@ -50,18 +62,30 @@ export default function Hero() {
             {heroData.greeting}
           </div>
 
-          {/* Name — the key element */}
-          <h1
-            className="h-name font-heading font-bold text-white"
-            style={{
-              fontSize: 'clamp(2.8rem, 10vw, 7.5rem)',
-              letterSpacing: '-0.04em',
-              lineHeight: 1.0,
-              marginBottom: '1.5rem',
-            }}
-          >
-            {heroData.name}
-          </h1>
+          {/* Name — with a very soft glow behind for depth */}
+          <div className="relative">
+            {/* Glow behind name */}
+            <div
+              aria-hidden
+              className="absolute -inset-8 -z-10 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse 70% 50% at 30% 50%, rgba(0,234,255,0.06) 0%, transparent 70%)',
+                filter: 'blur(20px)',
+              }}
+            />
+            <h1
+              className="h-name font-heading font-bold text-white"
+              style={{
+                fontSize: 'clamp(2.8rem, 10vw, 7.5rem)',
+                letterSpacing: '-0.04em',
+                lineHeight: 1.0,
+                marginBottom: '1.5rem',
+                willChange: 'transform',
+              }}
+            >
+              {heroData.name}
+            </h1>
+          </div>
 
           {/* Rotating Role Tiles */}
           <div className="h-role flex items-center gap-3 mb-8 overflow-hidden" style={{ minWidth: '22ch', height: '42px' }}>

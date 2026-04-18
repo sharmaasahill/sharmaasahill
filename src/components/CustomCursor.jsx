@@ -37,10 +37,14 @@ export default function CustomCursor() {
     };
 
     const onOver = (e) => {
-      if (e.target.closest('a, button, [role="button"], input, textarea')) setHovered(true);
+      const el = e.target.closest('a, button, [role="button"], input, textarea');
+      const card = e.target.closest('.project-card-item, .skill-badge, [data-cursor="card"]');
+      if (el || card) setHovered(true);
     };
-    const onOut  = (e) => {
-      if (e.target.closest('a, button, [role="button"], input, textarea')) setHovered(false);
+    const onOut = (e) => {
+      const el = e.target.closest('a, button, [role="button"], input, textarea');
+      const card = e.target.closest('.project-card-item, .skill-badge, [data-cursor="card"]');
+      if (el || card) setHovered(false);
     };
     const onDown = () => setClicking(true);
     const onUp   = () => setClicking(false);
@@ -71,8 +75,9 @@ export default function CustomCursor() {
         ref={ringRef}
         className="fixed top-0 left-0 pointer-events-none z-[9997] rounded-full will-change-transform"
         style={{
-          border: `1px solid ${hovered ? 'rgba(0,234,255,0.7)' : 'rgba(255,255,255,0.3)'}`,
-          transition: 'width 0.2s ease, height 0.2s ease, border-color 0.2s ease',
+          border: `1px solid ${hovered ? 'rgba(0,234,255,0.8)' : 'rgba(255,255,255,0.25)'}`,
+          boxShadow: hovered ? '0 0 14px rgba(0,234,255,0.25)' : 'none',
+          transition: 'width 0.22s ease, height 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease',
         }}
       />
       {/* Center dot — exact position */}

@@ -14,10 +14,13 @@ export default function Experience() {
   const ref = useRef(null);
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.ex-heading', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.ex-heading', start: 'top 82%' } });
+      gsap.from('.ex-heading', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ex-heading', start: 'top 85%' },
+      });
       gsap.from('.ex-item', {
-        y: 35, opacity: 0, duration: 0.65, stagger: 0.1, ease: 'power2.out',
-        scrollTrigger: { trigger: '.ex-list', start: 'top 78%', toggleActions: 'play none none none' },
+        x: -35, opacity: 0, scale: 0.98, duration: 0.65, stagger: 0.09, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ex-list', start: 'top 80%', toggleActions: 'play none none none' },
       });
     }, ref);
     return () => ctx.revert();

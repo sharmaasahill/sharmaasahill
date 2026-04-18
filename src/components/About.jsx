@@ -4,23 +4,40 @@ import { aboutData } from '../data/portfolioData';
 
 function Counter({ value, label }) {
   const ref = useRef(null);
+  const numRef = useRef(null);
   const [count, setCount] = useState(0);
   const ran = useRef(false);
+
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && !ran.current) {
         ran.current = true;
         const num = parseInt(value) || 0;
-        let cur = 0; const step = Math.ceil(num / 40);
-        const t = setInterval(() => { cur = Math.min(cur + step, num); setCount(cur); if (cur >= num) clearInterval(t); }, 28);
+        let cur = 0;
+        const step = Math.ceil(num / 40);
+        const t = setInterval(() => {
+          cur = Math.min(cur + step, num);
+          setCount(cur);
+          if (cur >= num) {
+            clearInterval(t);
+            // Subtle float after count finishes
+            if (numRef.current) {
+              gsap.to(numRef.current, {
+                y: -4, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1,
+                delay: Math.random() * 0.8,
+              });
+            }
+          }
+        }, 28);
       }
     }, { threshold: 0.7 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, [value]);
+
   return (
     <div ref={ref}>
-      <p className="font-heading font-bold text-white" style={{ fontSize: 'clamp(2rem,4vw,2.8rem)', letterSpacing:'-0.03em' }}>
+      <p ref={numRef} className="font-heading font-bold text-white" style={{ fontSize: 'clamp(2rem,4vw,2.8rem)', letterSpacing:'-0.03em', willChange: 'transform' }}>
         {count}<span style={{ color: 'var(--accent)' }}>+</span>
       </p>
       <p className="mono text-xs tracking-widest uppercase mt-1" style={{ color: 'var(--text4)' }}>{label}</p>
@@ -33,21 +50,30 @@ export default function About() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Heading — slides up
       gsap.from('.ab-heading', {
-        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: '.ab-heading', start: 'top 82%' },
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ab-heading', start: 'top 85%' },
       });
+      // Photo column — slides in from left
       gsap.from('.ab-image', {
-        x: -50, opacity: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: '.ab-image', start: 'top 80%' },
+        x: -40, opacity: 0, scale: 0.97, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ab-image', start: 'top 82%' },
       });
+      // Text column — slides in from right
+      gsap.from('.ab-text-group', {
+        x: 40, opacity: 0, scale: 0.97, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ab-text-group', start: 'top 82%' },
+      });
+      // Paragraphs stagger
       gsap.from('.ab-text', {
-        y: 35, opacity: 0, duration: 0.7, stagger: 0.13, ease: 'power2.out',
+        y: 25, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
         scrollTrigger: { trigger: '.ab-text-group', start: 'top 78%' },
       });
+      // Key-value rows
       gsap.from('.ab-kv', {
-        y: 20, opacity: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out',
-        scrollTrigger: { trigger: '.ab-kv-list', start: 'top 80%' },
+        y: 16, opacity: 0, duration: 0.5, stagger: 0.07, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ab-kv-list', start: 'top 82%' },
       });
     }, ref);
     return () => ctx.revert();

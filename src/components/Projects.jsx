@@ -20,24 +20,45 @@ function ProjectCard({ project, index }) {
     setGlow({ x: x * 100, y: y * 100 });
   }, [isMobile]);
 
+  const onEnter = useCallback(() => {
+    if (isMobile) return;
+    gsap.to(cardRef.current, {
+      y: -6,
+      boxShadow: '0 20px 55px rgba(0,0,0,0.55), 0 0 28px rgba(0,234,255,0.07)',
+      duration: 0.35,
+      ease: 'power2.out',
+    });
+  }, [isMobile]);
+
+  const onLeave = useCallback(() => {
+    setTilt({ x: 0, y: 0 });
+    gsap.to(cardRef.current, {
+      y: 0,
+      boxShadow: '0 0px 0px rgba(0,0,0,0)',
+      duration: 0.45,
+      ease: 'power2.out',
+    });
+  }, []);
+
   return (
     <div
       ref={cardRef}
       className={`project-card-item relative flex flex-col rounded-2xl overflow-hidden group ${project.title.includes('View All') ? 'cursor-pointer' : ''}`}
       onClick={(e) => {
-        if (e.target.closest('a')) return; // ignore clicks on inner links
+        if (e.target.closest('a')) return;
         if (project.title.includes('View All')) {
           window.open('https://github.com/sharmaasahill?tab=repositories', '_blank');
         }
       }}
       onMouseMove={onMove}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,234,255,0.2)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; setTilt({ x:0, y:0 }); }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,234,255,0.2)'; onEnter(); }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; onLeave(); }}
       style={{
         background: 'var(--glass-bg)',
         border: '1px solid var(--glass-border)',
         transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: 'transform 0.22s ease, border-color 0.3s ease',
+        transition: 'border-color 0.3s ease',
+        willChange: 'transform',
       }}
     >
       {/* Mouse-tracked cyan glow */}

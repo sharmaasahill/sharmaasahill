@@ -115,10 +115,18 @@ export default function Contact() {
   const ref = useRef(null);
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.ct-heading', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.ct-heading', start: 'top 82%' } });
-      gsap.from('.ct-col', {
-        y: 40, opacity: 0, duration: 0.7, stagger: 0.15, ease: 'power2.out',
-        scrollTrigger: { trigger: '.ct-grid', start: 'top 78%', toggleActions: 'play none none none' },
+      gsap.from('.ct-heading', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ct-heading', start: 'top 85%' },
+      });
+      // Left column slides from left, right column from right
+      gsap.from('.ct-col:first-child', {
+        x: -35, opacity: 0, scale: 0.97, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ct-grid', start: 'top 80%', toggleActions: 'play none none none' },
+      });
+      gsap.from('.ct-col:last-child', {
+        x: 35, opacity: 0, scale: 0.97, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ct-grid', start: 'top 80%', toggleActions: 'play none none none' },
       });
     }, ref);
     return () => ctx.revert();
