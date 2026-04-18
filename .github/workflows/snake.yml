@@ -25,6 +25,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prevent Vercel from deploying output branch
+        run: |
+          echo "{\"github\":{\"enabled\":false}}" > dist/vercel.json
+
       - name: Push SVG to output branch
         uses: crazy-max/ghaction-github-pages@v3
         with:
