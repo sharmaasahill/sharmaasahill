@@ -1,6 +1,6 @@
 ## Sahil Sharma
 
-Full-Stack Engineer • Systems Engineer • Problem Solver
+Product Engineer • Full-Stack Engineer • Systems Engineer • Problem Solver
 
 I build fast, scalable web applications focused on performance, reliability, and real-world impact.
 

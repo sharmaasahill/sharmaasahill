@@ -27,3 +27,14 @@ dist-ssr
 *.sw?
 # Added by code-review-graph
 .code-review-graph/
+
+# AI and IDE Tooling
+.claude/
+.kiro/
+.cursorrules
+.windsurfrules
+.mcp.json
+.opencode.json
+AGENTS.md
+CLAUDE.md
+GEMINI.md
