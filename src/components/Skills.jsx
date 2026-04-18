@@ -1,86 +1,91 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap } from '../lib/gsap';
 import { skillCategories } from '../data/portfolioData';
 
+const EXTRA = ['Docker','Redis','GraphQL','WebSockets','JWT','OAuth2','REST APIs','NGINX','AWS','Vercel','Supabase','Prisma','Tailwind','Jest','CI/CD','Linux'];
+
 export default function Skills() {
-    const titleRef = useRef(null);
-    const gridRef = useRef(null);
-    const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
-    const gridInView = useInView(gridRef, { once: true, margin: '-60px' });
+  const ref = useRef(null);
 
-    return (
-        <section id="skills" className="relative overflow-hidden">
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.sk-heading', 
+        { y: 50, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.sk-heading', start: 'top 88%', toggleActions: 'play none none none' } }
+      );
+      gsap.fromTo('.sk-cat', 
+        { y: 30, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out', scrollTrigger: { trigger: '.sk-grid', start: 'top 88%', toggleActions: 'play none none none' } }
+      );
+      gsap.fromTo('.skill-badge', 
+        { scale: 0.75, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.5, stagger: { each: 0.04, from: 'random' }, ease: 'back.out(1.7)',
+          scrollTrigger: { trigger: '.sk-grid', start: 'top 88%', toggleActions: 'play none none none', onEnter: () => setTimeout(startFloat, 600) }
+        }
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-            <div className="section-container relative z-10">
-                <motion.div
-                    ref={titleRef}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <h2 className="section-title">
-                        My <span className="gradient-text">Skills</span>
-                    </h2>
-                    <p className="section-subtitle">Technologies and tools I work with</p>
-                </motion.div>
+  function startFloat() {
+    document.querySelectorAll('.skill-badge').forEach((el) => {
+      gsap.to(el, {
+        y: gsap.utils.random(-7, 7),
+        duration: gsap.utils.random(1.8, 3.5),
+        ease: 'power1.inOut', yoyo: true, repeat: -1,
+        delay: gsap.utils.random(0, 2),
+      });
+    });
+  }
 
-                <div ref={gridRef} className="grid md:grid-cols-2 gap-6">
-                    {skillCategories.map((category, catIdx) => (
-                        <motion.div
-                            key={category.title}
-                            initial={{ opacity: 0, x: catIdx % 2 === 0 ? -50 : 50 }}
-                            animate={gridInView ? { opacity: 1, x: 0 } : {}}
-                            transition={{
-                                duration: 0.6,
-                                delay: catIdx * 0.15,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
-                            <div className="glass-card p-6 md:p-8 h-full">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <motion.div
-                                        initial={{ scale: 0, rotate: -90 }}
-                                        animate={gridInView ? { scale: 1, rotate: 0 } : {}}
-                                        transition={{ delay: catIdx * 0.15 + 0.3, type: 'spring', stiffness: 200 }}
-                                        className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center"
-                                    >
-                                        <span className="text-lg font-bold gradient-text">{category.title.charAt(0)}</span>
-                                    </motion.div>
-                                    <h3 className="text-lg font-semibold text-dark-900 dark:text-white">{category.title}</h3>
-                                    <div className="flex-1 h-px bg-dark-200 dark:bg-dark-700 ml-2" />
-                                </div>
+  return (
+    <section id="skills" ref={ref} className="relative">
+      <div className="section-container">
+        <div className="sk-heading mb-16">
+          <span className="section-label">Tech Stack</span>
+          <h2 className="section-title">
+            Tools I build <span className="gradient-text">things with</span>
+          </h2>
+        </div>
 
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {category.skills.map((skill, skillIdx) => (
-                                        <motion.div
-                                            key={skill.name}
-                                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                                            animate={gridInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                                            transition={{
-                                                duration: 0.4,
-                                                delay: catIdx * 0.15 + skillIdx * 0.05 + 0.3,
-                                                ease: [0.22, 1, 0.36, 1],
-                                            }}
-                                            whileHover={{ y: -4, scale: 1.06, transition: { duration: 0.2 } }}
-                                            className="flex items-center gap-3 p-3 rounded-xl bg-dark-50 dark:bg-dark-900/50 border border-dark-100 dark:border-dark-800 hover:border-primary-400 dark:hover:border-primary-600 hover:shadow-md hover:shadow-primary-500/10 transition-all group cursor-default"
-                                        >
-                                            <skill.icon
-                                                size={22}
-                                                style={{ color: skill.color }}
-                                                className="flex-shrink-0 group-hover:scale-125 transition-transform duration-300"
-                                            />
-                                            <span className="text-sm font-medium text-dark-700 dark:text-dark-300 truncate">
-                                                {skill.name}
-                                            </span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+        <div className="sk-grid space-y-14">
+          {skillCategories.map((cat) => (
+            <div key={cat.title} className="sk-cat">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="w-1 h-5 rounded-full" style={{ background: 'var(--accent)', opacity: 0.5 }} />
+                <span className="mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent)' }}>{cat.title}</span>
+                <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {cat.skills.map((skill) => (
+                  <div key={skill.name} className="skill-badge"
+                    onMouseEnter={(e) => { gsap.killTweensOf(e.currentTarget); gsap.to(e.currentTarget, { y: 0, duration: 0.15 }); }}
+                    onMouseLeave={(e) => {
+                      gsap.to(e.currentTarget, { y: gsap.utils.random(-7, 7), duration: gsap.utils.random(1.8, 3.2), ease: 'power1.inOut', yoyo: true, repeat: -1 });
+                    }}>
+                    <skill.icon size={15} style={{ color: skill.color, opacity: 0.85 }} />
+                    <span className="font-medium">{skill.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+
+        {/* Marquee */}
+        <div className="mt-16 overflow-hidden relative">
+          <div className="absolute left-0 inset-y-0 w-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, #000, transparent)' }} />
+          <div className="absolute right-0 inset-y-0 w-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #000, transparent)' }} />
+          <div className="flex gap-3 animate-marquee" style={{ width: 'max-content' }}>
+            {[...EXTRA, ...EXTRA].map((t, i) => (
+              <span key={i} className="mono text-xs px-3 py-1.5 rounded-lg shrink-0"
+                style={{ color: 'var(--text4)', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)' }}>
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

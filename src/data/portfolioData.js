@@ -21,19 +21,24 @@ export const navLinks = [
 export const heroData = {
     greeting: 'Hello, I\'m',
     name: 'Sahil Sharma',
-    title: 'Full Stack Developer & Freelancer',
+    title: 'Product Engineer',
     tagline: 'I build fast, scalable web applications that look great and work even better. Whether you need a complete product or a single feature, I take it from idea to launch.',
     resumeUrl: '/_Sahil_Sharma_SDE.pdf',
 };
 
 /* ── About ────────────────────────────────────────────────────── */
 export const aboutData = {
-    intro: "I'm a Full Stack Developer who loves building things that work well. I've shipped e-commerce platforms, AI-powered APIs, real-time dashboards, and more for clients across different continents. I don't just build features, I build products which people actually want to use.",
-    objective: 'Most developers focus on the code. I focus on the outcome. Every project I take on starts with one question -> What does the end user actually need? That thinking shapes everything I build. Clean architecture, smart tech choices, and shipping something that matters.',
+    paragraphs: [
+        "I build fast, scalable web applications designed to perform and built to last.",
+        "With a strong full-stack foundation, I create systems that are not just functional, but intuitive and reliable in real-world use.",
+        "I’ve delivered end-to-end solutions from secure platforms to real-time dashboards and API-driven products.",
+        "I approach every project with a product mindset, focusing on real user needs and building clean, efficient, and maintainable solutions.",
+        "I believe great software is about solving the right problems with clarity and precision."
+    ],
     highlights: [
-        { label: 'Experience', value: '2+ Years' },
+        { label: 'Experience', value: '3+ Years' },
         { label: 'Projects', value: '15+' },
-        { label: 'Tech Stack', value: '10+' },
+        { label: 'Tech Stack', value: '20+' },
         { label: 'Clients', value: '10+' },
     ],
 };

@@ -1,169 +1,164 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { FiSend } from 'react-icons/fi';
+import { useState, useRef, useEffect } from 'react';
+import { gsap } from '../lib/gsap';
+import MagneticButton from './MagneticButton';
+import { contactInfo } from '../data/portfolioData';
+import { FiSend, FiMail } from 'react-icons/fi';
+
+const CMDS = {
+  help:     () => ['  Commands: email · linkedin · github · hire · clear'],
+  email:    () => { window.open('mailto:i.sahilkrsharma@gmail.com'); return ['  Opening email…']; },
+  linkedin: () => { window.open('https://www.linkedin.com/in/sharmaasahill/', '_blank'); return ['  Opening LinkedIn…']; },
+  github:   () => { window.open('https://github.com/sharmaasahill', '_blank'); return ['  Opening GitHub…']; },
+  hire:     () => ["  Let's build something. Fill the form or email directly."],
+  whoami:   () => ['  Sahil Sharma — Full Stack Developer'],
+  clear:    () => null,
+};
+
+function Terminal() {
+  const [lines, setLines] = useState([{ type: 'sys', text: 'Type "help" to see commands.' }]);
+  const [input, setInput] = useState('');
+  const [hist, setHist] = useState([]);
+  const [hi, setHi] = useState(-1);
+  const outRef = useRef(null);
+  const inRef  = useRef(null);
+
+  useEffect(() => { if (outRef.current) outRef.current.scrollTop = outRef.current.scrollHeight; }, [lines]);
+
+  const run = (cmd) => {
+    const t = cmd.trim().toLowerCase();
+    const next = [...lines, { type: 'in', text: t }];
+    if (!t) { setLines(next); return; }
+    if (t === 'clear') { setLines([{ type: 'sys', text: 'Cleared.' }]); }
+    else if (CMDS[t]) { const out = CMDS[t](); setLines([...next, ...(out||[]).map(s=>({type:'out',text:s}))]); setHist(p=>[t,...p]); }
+    else { setLines([...next, { type: 'err', text: `  Unknown: "${t}". Try "help".` }]); setHist(p=>[t,...p]); }
+    setInput(''); setHi(-1);
+  };
+
+  const onKey = (e) => {
+    if (e.key==='Enter')     run(input);
+    if (e.key==='ArrowUp')   { e.preventDefault(); const i=Math.min(hi+1,hist.length-1); setHi(i); setInput(hist[i]||''); }
+    if (e.key==='ArrowDown') { e.preventDefault(); const i=Math.max(hi-1,-1); setHi(i); setInput(hist[i]||''); }
+  };
+
+  return (
+    <div className="rounded-2xl overflow-hidden glass" onClick={() => inRef.current?.focus()}>
+      <div className="flex items-center gap-1.5 px-4 py-3" style={{ borderBottom: '1px solid var(--line)' }}>
+        {['rgba(239,68,68,0.5)','rgba(234,179,8,0.5)','rgba(34,197,94,0.5)'].map((c,i) => (
+          <div key={i} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />
+        ))}
+        <span className="mono text-xs ml-2" style={{ color: 'var(--text5)' }}>sahil@portfolio</span>
+      </div>
+      <div ref={outRef} className="h-44 overflow-y-auto p-4 space-y-1.5" style={{ scrollbarWidth: 'none' }}>
+        {lines.map((l, i) => (
+          <div key={i} className="mono text-xs leading-relaxed">
+            {l.type==='in'  && <span><span style={{color:'var(--text5)'}}>›  </span><span style={{color:'var(--text3)'}}>{l.text}</span></span>}
+            {l.type==='sys' && <span style={{color:'var(--text5)'}}>{l.text}</span>}
+            {l.type==='out' && <span style={{color:'var(--text3)'}}>{l.text}</span>}
+            {l.type==='err' && <span style={{color:'rgba(252,165,165,0.7)'}}>{l.text}</span>}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-2 px-4 py-3" style={{ borderTop: '1px solid var(--line)' }}>
+        <span className="mono text-xs" style={{ color: 'var(--text5)' }}>›</span>
+        <input ref={inRef} type="text" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={onKey}
+          placeholder="type a command…" autoComplete="off"
+          className="flex-1 bg-transparent outline-none mono text-xs"
+          style={{ color: 'var(--text2)', caretColor: 'var(--accent)', '::placeholder': { color: 'var(--text5)' } }} />
+        <span className="w-1 h-3 rounded-sm animate-blink" style={{ background: 'var(--accent)', opacity: 0.6 }} />
+      </div>
+    </div>
+  );
+}
+
+function ContactForm() {
+  const [form, setForm] = useState({ name:'', email:'', message:'' });
+  const [status, setStatus] = useState('idle');
+  const onChange = e => setForm({...form, [e.target.name]: e.target.value});
+  const onSubmit = async e => {
+    e.preventDefault(); setStatus('sending');
+    await new Promise(r => setTimeout(r, 900));
+    window.open(`mailto:i.sahilkrsharma@gmail.com?subject=Contact from ${form.name}&body=${encodeURIComponent(form.message)}%0A%0AFrom: ${form.email}`);
+    setStatus('sent');
+  };
+  const iStyle = { background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius:10, padding:'11px 15px', fontSize:14, color:'#fff', outline:'none', width:'100%', fontFamily:'Inter,sans-serif', transition:'border-color 0.2s ease' };
+  return (
+    <form onSubmit={onSubmit} autoComplete="off" className="space-y-4">
+      <div className="grid sm:grid-cols-2 gap-4">
+        {[{label:'Name',name:'name',type:'text',ph:'Your name'},{label:'Email',name:'email',type:'email',ph:'you@email.com'}].map(f=>(
+          <div key={f.name}>
+            <label className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>{f.label}</label>
+            <input type={f.type} name={f.name} value={form[f.name]} onChange={onChange} required autoComplete="off" placeholder={f.ph} style={iStyle}
+              onFocus={e=>{e.target.style.borderColor='rgba(0,234,255,0.3)';}}
+              onBlur={e=>{e.target.style.borderColor='var(--glass-border)';}} />
+          </div>
+        ))}
+      </div>
+      <div>
+        <label className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>Message</label>
+        <textarea name="message" value={form.message} onChange={onChange} required rows={5} placeholder="Tell me about your project…"
+          style={{...iStyle,resize:'none'}}
+          onFocus={e=>{e.target.style.borderColor='rgba(0,234,255,0.3)';}}
+          onBlur={e=>{e.target.style.borderColor='var(--glass-border)';}} />
+      </div>
+      <MagneticButton className="w-full">
+        <button type="submit" disabled={status!=='idle'} className="btn-primary w-full justify-center">
+          {status==='idle'&&<><FiSend size={14}/>Send Message</>}
+          {status==='sending'&&'Sending…'}
+          {status==='sent'&&'Sent!'}
+        </button>
+      </MagneticButton>
+    </form>
+  );
+}
 
 export default function Contact() {
-    const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const titleRef = useRef(null);
-    const formRef = useRef(null);
-    const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
-    const formInView = useInView(formRef, { once: true, margin: '-60px' });
+  const ref = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.ct-heading', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.ct-heading', start: 'top 82%' } });
+      gsap.from('.ct-col', {
+        y: 40, opacity: 0, duration: 0.7, stagger: 0.15, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ct-grid', start: 'top 78%', toggleActions: 'play none none none' },
+      });
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-
-        try {
-            const response = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    access_key: import.meta.env.VITE_WEB3FORMS_KEY,
-                    name: formData.name,
-                    email: formData.email,
-                    subject: formData.subject,
-                    message: formData.message,
-                }),
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                setSubmitted(true);
-                setFormData({ name: '', email: '', subject: '', message: '' });
-                setTimeout(() => setSubmitted(false), 4000);
-            } else {
-                setError('Something went wrong. Please try again.');
-            }
-        } catch (err) {
-            setError('Failed to send. Check your connection and try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const inputClasses = 'w-full px-4 py-3 rounded-xl bg-dark-50 dark:bg-dark-900/50 border border-dark-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder-dark-400 dark:placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-sm hover:border-primary-300 dark:hover:border-primary-600';
-
-    const formFields = [
-        { delay: 0 },   // name + email row
-        { delay: 0.1 }, // subject
-        { delay: 0.2 }, // message
-        { delay: 0.3 }, // button
-    ];
-
-    return (
-        <section id="contact" className="relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="section-container relative z-10">
-                <motion.div
-                    ref={titleRef}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <h2 className="section-title">
-                        Let's <span className="gradient-text">Work Together</span>
-                    </h2>
-                    <p className="section-subtitle">Have a project idea or need a developer? Drop me a message and let's discuss how I can help</p>
-                </motion.div>
-
-                <motion.div
-                    ref={formRef}
-                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                    animate={formInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <form onSubmit={handleSubmit} className="glass-card p-6 md:p-8 space-y-4 max-w-2xl mx-auto">
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={formInView ? { opacity: 1, x: 0 } : {}}
-                            transition={{ delay: formFields[0].delay + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            className="grid sm:grid-cols-2 gap-4"
-                        >
-                            <input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={handleChange} required className={inputClasses} />
-                            <input type="email" name="email" placeholder="Your Email" value={formData.email} onChange={handleChange} required className={inputClasses} />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={formInView ? { opacity: 1, x: 0 } : {}}
-                            transition={{ delay: formFields[1].delay + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <input type="text" name="subject" placeholder="Subject" value={formData.subject} onChange={handleChange} required className={inputClasses} />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={formInView ? { opacity: 1, x: 0 } : {}}
-                            transition={{ delay: formFields[2].delay + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <textarea name="message" placeholder="Your Message" value={formData.message} onChange={handleChange} required rows={5} className={`${inputClasses} resize-none`} />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={formInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ delay: formFields[3].delay + 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            {submitted ? (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ type: 'spring', stiffness: 200 }}
-                                    className="text-center py-6 space-y-2"
-                                >
-                                    <motion.div
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ type: 'spring', stiffness: 300, delay: 0.1 }}
-                                        className="text-3xl"
-                                    >
-                                        ✔️
-                                    </motion.div>
-                                    <p className="text-lg font-semibold text-dark-900 dark:text-white">Message sent successfully!</p>
-                                    <p className="text-sm text-dark-500 dark:text-dark-400">Thanks for reaching out. I'll get back to you shortly.</p>
-                                </motion.div>
-                            ) : (
-                                <motion.button
-                                    whileHover={{ scale: 1.03, y: -2 }}
-                                    whileTap={{ scale: 0.97 }}
-                                    type="submit"
-                                    disabled={loading}
-                                    className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                >
-                                    {loading ? (
-                                        <>Sending...</>
-                                    ) : (
-                                        <>
-                                            <FiSend size={16} />
-                                            Start a Conversation
-                                        </>
-                                    )}
-                                </motion.button>
-                            )}
-                        </motion.div>
-
-                        {error && (
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-red-500 text-sm text-center mt-2"
-                            >
-                                {error}
-                            </motion.p>
-                        )}
-                    </form>
-                </motion.div>
+  return (
+    <section id="contact" ref={ref} className="relative">
+      <div className="section-container">
+        <div className="ct-heading text-center mb-16">
+          <span className="section-label justify-center">Contact</span>
+          <h2 className="section-title">Let's <span className="gradient-text">work together</span></h2>
+          <p className="section-body mt-4 mx-auto text-center" style={{ maxWidth:'40ch', opacity:0.7 }}>
+            Have a project? Use the terminal or send a message.
+          </p>
+        </div>
+        <div className="ct-grid grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="ct-col space-y-5">
+            <Terminal />
+            <div className="p-6 rounded-2xl glass">
+              <p className="mono text-xs mb-4" style={{color:'var(--text5)'}}>DIRECT</p>
+              <div className="space-y-3">
+                <a href="mailto:i.sahilkrsharma@gmail.com" className="flex items-center gap-3 text-sm transition-colors duration-200" style={{color:'var(--text4)'}}
+                  onMouseEnter={e=>e.currentTarget.style.color='var(--text2)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text4)'}>
+                  <FiMail size={13}/> i.sahilkrsharma@gmail.com
+                </a>
+                {contactInfo.socials.map(s=>(
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm transition-colors duration-200" style={{color:'var(--text4)'}}
+                    onMouseEnter={e=>e.currentTarget.style.color='var(--text2)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text4)'}>
+                    <s.icon size={13}/> {s.name}
+                  </a>
+                ))}
+              </div>
             </div>
-        </section>
-    );
+          </div>
+          <div className="ct-col p-7 rounded-2xl glass">
+            <p className="mono text-xs mb-6" style={{color:'var(--text5)'}}>SEND A MESSAGE</p>
+            <ContactForm/>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

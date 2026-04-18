@@ -1,114 +1,86 @@
-import { useEffect, useCallback, useRef } from 'react';
-import { useMotionValue, useSpring, motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import useMediaQuery from '../hooks/useMediaQuery';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CustomCursor() {
-    const cursorX = useMotionValue(-200);
-    const cursorY = useMotionValue(-200);
-    const hovered = useRef(false);
-    const hoveredEl = useRef(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const ringRef  = useRef(null);
+  const dotRef   = useRef(null);
+  const pos      = useRef({ x: 0, y: 0 });
+  const smooth   = useRef({ x: 0, y: 0 });
+  const rafRef   = useRef(null);
+  const [visible,  setVisible]  = useState(false);
+  const [hovered,  setHovered]  = useState(false);
+  const [clicking, setClicking] = useState(false);
 
-    const springCfg = { damping: 35, stiffness: 700, mass: 0.1 };
-    const sx = useSpring(cursorX, springCfg);
-    const sy = useSpring(cursorY, springCfg);
+  useEffect(() => {
+    if (isMobile) return;
 
-    const onMove = useCallback((e) => {
-        // Use requestAnimationFrame for smoother updates that sync with the screen refresh
-        requestAnimationFrame(() => {
-            cursorX.set(e.clientX);
-            cursorY.set(e.clientY);
-        });
-    }, [cursorX, cursorY]);
+    const onMove = (e) => {
+      pos.current = { x: e.clientX, y: e.clientY };
+      if (!visible) setVisible(true);
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${e.clientX - 3}px, ${e.clientY - 3}px)`;
+      }
+    };
 
-    useEffect(() => {
-        window.addEventListener('mousemove', onMove);
+    const animate = () => {
+      smooth.current.x += (pos.current.x - smooth.current.x) * 0.1;
+      smooth.current.y += (pos.current.y - smooth.current.y) * 0.1;
+      if (ringRef.current) {
+        const size = hovered ? 40 : clicking ? 18 : 28;
+        ringRef.current.style.transform = `translate(${smooth.current.x - size / 2}px, ${smooth.current.y - size / 2}px)`;
+        ringRef.current.style.width  = `${size}px`;
+        ringRef.current.style.height = `${size}px`;
+      }
+      rafRef.current = requestAnimationFrame(animate);
+    };
 
-        const addHover = (e) => { hovered.current = true; hoveredEl.current = e.currentTarget; };
-        const removeHover = () => { hovered.current = false; hoveredEl.current = null; };
+    const onOver = (e) => {
+      if (e.target.closest('a, button, [role="button"], input, textarea')) setHovered(true);
+    };
+    const onOut  = (e) => {
+      if (e.target.closest('a, button, [role="button"], input, textarea')) setHovered(false);
+    };
+    const onDown = () => setClicking(true);
+    const onUp   = () => setClicking(false);
 
-        const observe = () => {
-            document.querySelectorAll('a, button, [role="button"], input, textarea, .cursor-hover').forEach((el) => {
-                el.addEventListener('mouseenter', addHover);
-                el.addEventListener('mouseleave', removeHover);
-            });
-        };
+    window.addEventListener('mousemove',  onMove,  { passive: true });
+    window.addEventListener('mouseover',  onOver);
+    window.addEventListener('mouseout',   onOut);
+    window.addEventListener('mousedown',  onDown);
+    window.addEventListener('mouseup',    onUp);
+    rafRef.current = requestAnimationFrame(animate);
 
-        observe();
-        const observer = new MutationObserver(observe);
-        observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      window.removeEventListener('mousemove',  onMove);
+      window.removeEventListener('mouseover',  onOver);
+      window.removeEventListener('mouseout',   onOut);
+      window.removeEventListener('mousedown',  onDown);
+      window.removeEventListener('mouseup',    onUp);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isMobile, visible, hovered, clicking]);
 
-        return () => {
-            window.removeEventListener('mousemove', onMove);
-            observer.disconnect();
-        };
-    }, [onMove]);
+  if (isMobile || !visible) return null;
 
-    if (typeof window !== 'undefined' && 'ontouchstart' in window) return null;
-
-    return (
-        <>
-            {/* Spotlight glow — large soft gradient that illuminates the area */}
-            <motion.div
-                className="fixed pointer-events-none z-[9997]"
-                style={{
-                    x: sx,
-                    y: sy,
-                    width: 300,
-                    height: 300,
-                    translateX: '-50%',
-                    translateY: '-50%',
-                }}
-            >
-                <div
-                    className="w-full h-full rounded-full"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, rgba(124,58,237,0.03) 40%, transparent 70%)',
-                    }}
-                />
-            </motion.div>
-
-            {/* Cursor ring — minimal animated ring, no dot */}
-            <motion.div
-                className="fixed pointer-events-none z-[9999]"
-                style={{
-                    x: cursorX,
-                    y: cursorY,
-                    translateX: '-50%',
-                    translateY: '-50%',
-                }}
-            >
-                <svg width="40" height="40" viewBox="0 0 40 40" className="animate-[spin_8s_linear_infinite]">
-                    <circle
-                        cx="20" cy="20" r="16"
-                        fill="none"
-                        stroke="url(#cursorGrad)"
-                        strokeWidth="1.5"
-                        strokeDasharray="25 75"
-                        strokeLinecap="round"
-                    />
-                    <defs>
-                        <linearGradient id="cursorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#7c3aed" />
-                            <stop offset="100%" stopColor="#c084fc" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </motion.div>
-
-            {/* Inner crosshair */}
-            <motion.div
-                className="fixed pointer-events-none z-[9999]"
-                style={{
-                    x: cursorX,
-                    y: cursorY,
-                    translateX: '-50%',
-                    translateY: '-50%',
-                }}
-            >
-                <svg width="12" height="12" viewBox="0 0 12 12">
-                    <line x1="6" y1="0" x2="6" y2="12" stroke="#7c3aed" strokeWidth="1" opacity="0.7" />
-                    <line x1="0" y1="6" x2="12" y2="6" stroke="#7c3aed" strokeWidth="1" opacity="0.7" />
-                </svg>
-            </motion.div>
-        </>
-    );
+  return (
+    <>
+      {/* Outer ring — lags, transitions size */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9997] rounded-full will-change-transform"
+        style={{
+          border: `1px solid ${hovered ? 'rgba(0,234,255,0.7)' : 'rgba(255,255,255,0.3)'}`,
+          transition: 'width 0.2s ease, height 0.2s ease, border-color 0.2s ease',
+        }}
+      />
+      {/* Center dot — exact position */}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9998] will-change-transform"
+        style={{ background: hovered ? '#00eaff' : 'rgba(255,255,255,0.8)', transition: 'background 0.2s ease' }}
+      />
+    </>
+  );
 }

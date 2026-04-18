@@ -1,100 +1,125 @@
 import { useState, useEffect } from 'react';
-import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
-import { useTheme } from '../context/ThemeContext';
-
-const navLinks = [
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Experience', href: '#experience' },
-    { name: 'Services', href: '#services' },
-    { name: 'Contact', href: '#contact' },
-];
+import { Link } from 'react-scroll';
+import { motion, AnimatePresence } from 'framer-motion';
+import { HiMenuAlt3, HiX } from 'react-icons/hi';
+import { gsap } from '../lib/gsap';
+import { navLinks } from '../data/portfolioData';
 
 export default function Navbar() {
-    const { darkMode, toggleDarkMode } = useTheme();
-    const [scrolled, setScrolled] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
+  const [active, setActive] = useState('hero');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-    useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.nav-bar', 
+        { y: -50, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.3 }
+      );
+    });
 
-    // Close mobile nav on link click
-    const handleLinkClick = () => setMobileOpen(false);
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', fn);
+      ctx.revert();
+    };
+  }, []);
 
-    return (
-        <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                ? 'bg-white/80 dark:bg-dark-950/80 backdrop-blur-xl shadow-lg shadow-dark-900/5 dark:shadow-dark-950/30'
-                : 'bg-transparent'
-                }`}
-        >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16 md:h-20">
-                    {/* Logo */}
-                    <a
-                        href="#hero"
-                        className="text-xl md:text-2xl font-bold cursor-pointer select-none"
-                    >
-                        <span className="gradient-text">sharma</span>
-                        <span className="text-dark-900 dark:text-white">asahill</span>
-                    </a>
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
-                    {/* Desktop nav links */}
-                    <div className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.name}
-                                href={link.href}
-                                className="px-3 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors rounded-lg hover:bg-dark-100/50 dark:hover:bg-dark-800/50"
-                            >
-                                {link.name}
-                            </a>
-                        ))}
-                    </div>
+  return (
+    <>
+      <header
+        className="nav-bar"
+        style={{
+          position: 'fixed', top: 0, left: 0, right: 0,
+          zIndex: 999,
+          background: 'rgba(0,0,0,0.82)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          transition: 'background 0.3s ease, border-color 0.3s ease',
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <Link to="hero" smooth duration={600} className="cursor-pointer shrink-0">
+            <span className="font-heading font-bold text-white text-sm tracking-wide select-none">
+              Sahil Sharma
+            </span>
+          </Link>
 
-                    {/* Right side: theme toggle + hamburger */}
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={toggleDarkMode}
-                            aria-label="Toggle dark mode"
-                            className="p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-colors"
-                        >
-                            {darkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
-                        </button>
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                smooth
+                offset={0}
+                duration={500}
+                spy
+                onSetActive={() => setActive(link.to)}
+                className="relative px-4 py-2 rounded-lg text-sm font-medium cursor-pointer select-none transition-colors duration-200"
+                style={{ color: active === link.to ? '#fff' : 'var(--text2)' }}
+              >
+                {active === link.to && (
+                  <motion.div
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-lg"
+                    style={{ background: 'rgba(255,255,255,0.07)' }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+                  />
+                )}
+                <span className="relative z-10">{link.name}</span>
+              </Link>
+            ))}
+          </nav>
 
-                        {/* Hamburger */}
-                        <button
-                            onClick={() => setMobileOpen(!mobileOpen)}
-                            aria-label="Toggle menu"
-                            className="md:hidden p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-colors"
-                        >
-                            {mobileOpen ? <FiX size={18} /> : <FiMenu size={18} />}
-                        </button>
-                    </div>
-                </div>
-            </div>
+          <div className="flex items-center gap-3">
+            <a href="mailto:i.sahilkrsharma@gmail.com" className="hidden md:inline-flex btn-primary text-xs py-2 px-4">
+              Hire Me
+            </a>
+            <button onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-white"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+              aria-label="Toggle menu">
+              {menuOpen ? <HiX size={18} /> : <HiMenuAlt3 size={18} />}
+            </button>
+          </div>
+        </div>
+      </header>
 
-            {/* Mobile menu */}
-            {mobileOpen && (
-                <div className="md:hidden bg-white/95 dark:bg-dark-950/95 backdrop-blur-xl border-t border-dark-200 dark:border-dark-800">
-                    <div className="px-4 py-3 space-y-1">
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.name}
-                                href={link.href}
-                                onClick={handleLinkClick}
-                                className="block px-4 py-2.5 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-dark-100/50 dark:hover:bg-dark-800/50 rounded-lg transition-colors"
-                            >
-                                {link.name}
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </nav>
-    );
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div key="mob" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position:'fixed', inset:0, zIndex:998, background:'rgba(0,0,0,0.96)', backdropFilter:'blur(20px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <nav className="flex flex-col items-center gap-2 w-full max-w-xs">
+              {navLinks.map((l, i) => (
+                <motion.div key={l.to} className="w-full" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.05 }}>
+                  <Link to={l.to} smooth offset={0} duration={500} onClick={() => setMenuOpen(false)}
+                    className="block w-full text-center py-4 font-heading text-2xl font-semibold cursor-pointer"
+                    style={{ color:'var(--text4)', transition:'color 0.2s ease' }}
+                    onMouseEnter={e=>{e.currentTarget.style.color='#fff';}}
+                    onMouseLeave={e=>{e.currentTarget.style.color='var(--text4)';}}>
+                    {l.name}
+                  </Link>
+                </motion.div>
+              ))}
+              <motion.a href="mailto:i.sahilkrsharma@gmail.com" onClick={() => setMenuOpen(false)}
+                className="btn-primary mt-8 w-64 justify-center"
+                initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: navLinks.length*0.05+0.05 }}>
+                Hire Me
+              </motion.a>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

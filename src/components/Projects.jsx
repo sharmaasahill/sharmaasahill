@@ -1,120 +1,125 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { FiExternalLink, FiFolder } from 'react-icons/fi';
+import { useRef, useCallback, useState, useEffect } from 'react';
+import { FiGithub, FiExternalLink } from 'react-icons/fi';
+import { gsap } from '../lib/gsap';
 import { projects } from '../data/portfolioData';
+import useMediaQuery from '../hooks/useMediaQuery';
 
-function ProjectCard({ project, index, inView }) {
-    // Alternate animation direction
-    const directions = [
-        { x: -40, y: 20 },
-        { x: 0, y: 40 },
-        { x: 40, y: 20 },
-    ];
-    const dir = directions[index % 3];
+function ProjectCard({ project, index }) {
+  const cardRef = useRef(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glow, setGlow] = useState({ x: 50, y: 50 });
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: dir.x, y: dir.y, scale: 0.9 }}
-            animate={inView ? { opacity: 1, x: 0, y: 0, scale: 1 } : {}}
-            transition={{
-                duration: 0.6,
-                delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-            }}
-            whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.25 } }}
-            className="glass-card h-full flex flex-col overflow-hidden group"
-        >
-            {/* Animated gradient bar */}
-            <motion.div
-                className="h-1 bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600"
-                initial={{ scaleX: 0 }}
-                animate={inView ? { scaleX: 1 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 + 0.3, ease: 'easeOut' }}
-                style={{ transformOrigin: 'left' }}
-            />
+  const onMove = useCallback((e) => {
+    if (isMobile) return;
+    const r = cardRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top)  / r.height;
+    setTilt({ x: (y - 0.5) * -12, y: (x - 0.5) * 12 });
+    setGlow({ x: x * 100, y: y * 100 });
+  }, [isMobile]);
 
-            <div className="p-6 flex flex-col flex-1">
-                <div className="flex items-center justify-between mb-4">
-                    <motion.div
-                        initial={{ rotate: -45, scale: 0 }}
-                        animate={inView ? { rotate: 0, scale: 1 } : {}}
-                        transition={{ delay: index * 0.1 + 0.2, type: 'spring', stiffness: 200 }}
-                        className="w-11 h-11 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center group-hover:bg-primary-500 transition-colors duration-300"
-                    >
-                        <FiFolder className="text-primary-500 group-hover:text-white transition-colors duration-300" size={22} />
-                    </motion.div>
-                    <div className="flex items-center gap-3">
-                        {project.githubUrl && project.githubUrl !== '#' && (
-                            <a
-                                href={project.githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-dark-400 hover:text-primary-500 transition-colors hover:scale-110"
-                                aria-label="View Project"
-                            >
-                                <FiExternalLink size={20} />
-                            </a>
-                        )}
-                    </div>
-                </div>
+  return (
+    <div
+      ref={cardRef}
+      className={`project-card-item relative flex flex-col rounded-2xl overflow-hidden group ${project.title.includes('View All') ? 'cursor-pointer' : ''}`}
+      onClick={(e) => {
+        if (e.target.closest('a')) return; // ignore clicks on inner links
+        if (project.title.includes('View All')) {
+          window.open('https://github.com/sharmaasahill?tab=repositories', '_blank');
+        }
+      }}
+      onMouseMove={onMove}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,234,255,0.2)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; setTilt({ x:0, y:0 }); }}
+      style={{
+        background: 'var(--glass-bg)',
+        border: '1px solid var(--glass-border)',
+        transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: 'transform 0.22s ease, border-color 0.3s ease',
+      }}
+    >
+      {/* Mouse-tracked cyan glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+        style={{ background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(0,234,255,0.07) 0%, transparent 55%)` }} />
 
-                <h3 className="text-lg font-semibold text-dark-900 dark:text-white mb-2 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">
-                    {project.title}
-                </h3>
-
-                <p className="text-sm text-dark-500 dark:text-dark-400 leading-relaxed mb-4 flex-1">
-                    {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-dark-100 dark:border-dark-800">
-                    {project.tech.map((tech, ti) => (
-                        <motion.span
-                            key={tech}
-                            initial={{ opacity: 0, scale: 0.7 }}
-                            animate={inView ? { opacity: 1, scale: 1 } : {}}
-                            transition={{ delay: index * 0.1 + ti * 0.04 + 0.4 }}
-                            className="text-xs font-medium px-2.5 py-1 rounded-md bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/50"
-                        >
-                            {tech}
-                        </motion.span>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
+      <div className="relative flex flex-col flex-1 p-7"
+        style={{ backdropFilter: 'blur(14px)' }}>
+        <span className="mono text-xs block mb-5" style={{ color: 'var(--text4)' }}>
+          {String(index + 1).padStart(2, '00')}
+        </span>
+        <h3 className="font-heading font-semibold text-base leading-snug mb-3 text-white transition-colors duration-200">
+          {project.title}
+        </h3>
+        <p className="text-sm leading-relaxed flex-1 mb-6" style={{ color: 'var(--text3)' }}>
+          {project.description}
+        </p>
+        <div className="flex flex-wrap gap-1.5 mb-6">
+          {project.tech.map((t) => <span key={t} className="tag">{t}</span>)}
+        </div>
+        <div className="flex items-center gap-4 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+          {project.githubUrl && project.githubUrl !== '#' && (
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs transition-colors duration-200"
+              style={{ color: 'var(--text3)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
+              <FiGithub size={12} /> Code
+            </a>
+          )}
+          {project.liveUrl && project.liveUrl !== '#' && (
+            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs ml-auto transition-colors duration-200"
+              style={{ color: 'var(--text3)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
+              <FiExternalLink size={12} /> Live
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Projects() {
-    const titleRef = useRef(null);
-    const gridRef = useRef(null);
-    const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
-    const gridInView = useInView(gridRef, { once: true, margin: '-60px' });
+  const ref = useRef(null);
 
-    return (
-        <section id="projects" className="relative overflow-hidden">
-            <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.pr-heading', {
+        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.pr-heading', start: 'top 82%' },
+      });
+      gsap.from('.project-card-item', {
+        y: 60, opacity: 0, scale: 0.96, duration: 0.7,
+        stagger: { each: 0.1, from: 'start' },
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '.pr-grid', start: 'top 78%', toggleActions: 'play none none none' },
+      });
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-            <div className="section-container relative z-10">
-                <motion.div
-                    ref={titleRef}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <h2 className="section-title">
-                        My <span className="gradient-text">Projects</span>
-                    </h2>
-                    <p className="section-subtitle">
-                        A selection of my recent work, from full-stack apps to APIs and beyond
-                    </p>
-                </motion.div>
+  return (
+    <section id="projects" ref={ref} className="relative">
+      <div className="section-container">
+        <div className="pr-heading flex items-end justify-between gap-8 mb-16 flex-wrap">
+          <div>
+            <span className="section-label">Projects</span>
+            <h2 className="section-title">Things I've <span className="gradient-text">built</span></h2>
+          </div>
+          <a href="https://github.com/sharmaasahill?tab=repositories" target="_blank" rel="noopener noreferrer"
+            className="btn-ghost" style={{ border: '1px solid var(--glass-border)', borderRadius: 10 }}>
+            <FiGithub size={13} /> All repos
+          </a>
+        </div>
 
-                <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {projects.map((project, i) => (
-                        <ProjectCard key={project.title} project={project} index={i} inView={gridInView} />
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+        <div className="pr-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ perspective: '1000px' }}>
+          {projects.map((p, i) => <ProjectCard key={p.title} project={p} index={i} />)}
+        </div>
+      </div>
+    </section>
+  );
 }

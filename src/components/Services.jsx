@@ -1,76 +1,52 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap } from '../lib/gsap';
 import { services } from '../data/portfolioData';
 
 export default function Services() {
-    const titleRef = useRef(null);
-    const gridRef = useRef(null);
-    const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
-    const gridInView = useInView(gridRef, { once: true, margin: '-60px' });
+  const ref = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.sv-heading', 
+        { y: 50, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.sv-heading', start: 'top 82%', toggleActions: 'play none none none' } }
+      );
+      gsap.fromTo('.svc-card', 
+        { y: 40, opacity: 0, scale: 0.96 }, 
+        { y: 0, opacity: 1, scale: 1, duration: 0.65, stagger: { each: 0.09, from: 'start' }, Math: false, ease: 'power3.out', scrollTrigger: { trigger: '.sv-grid', start: 'top 78%', toggleActions: 'play none none none' } }
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-    return (
-        <section id="services" className="relative overflow-hidden">
-            <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="section-container relative z-10">
-                <motion.div
-                    ref={titleRef}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <h2 className="section-title">
-                        What I <span className="gradient-text">Offer</span>
-                    </h2>
-                    <p className="section-subtitle">Services tailored for startups, businesses, and entrepreneurs</p>
-                </motion.div>
-
-                <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    {services.map((service, i) => {
-                        const Icon = service.icon;
-                        return (
-                            <motion.div
-                                key={service.title}
-                                initial={{ opacity: 0, y: 50, scale: 0.85 }}
-                                animate={gridInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                                transition={{
-                                    duration: 0.5,
-                                    delay: i * 0.12,
-                                    ease: [0.22, 1, 0.36, 1],
-                                }}
-                                whileHover={{
-                                    y: -8,
-                                    scale: 1.03,
-                                    transition: { duration: 0.25 },
-                                }}
-                                className="glass-card p-8 text-center h-full group cursor-default relative overflow-hidden"
-                            >
-                                {/* Subtle shimmer on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:via-primary-500/0 group-hover:to-primary-500/5 transition-all duration-500" />
-
-                                <div className="relative z-10">
-                                    <motion.div
-                                        initial={{ scale: 0, rotate: -180 }}
-                                        animate={gridInView ? { scale: 1, rotate: 0 } : {}}
-                                        transition={{ delay: i * 0.12 + 0.2, type: 'spring', stiffness: 180, damping: 12 }}
-                                        className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/50 group-hover:scale-110 transition-all duration-300"
-                                    >
-                                        <Icon className="text-white" size={28} />
-                                    </motion.div>
-
-                                    <h3 className="text-lg font-semibold text-dark-900 dark:text-white mb-3">
-                                        {service.title}
-                                    </h3>
-
-                                    <p className="text-sm text-dark-500 dark:text-dark-400 leading-relaxed">
-                                        {service.description}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
+  return (
+    <section id="services" ref={ref} className="relative">
+      <div className="section-container">
+        <div className="sv-heading flex items-end justify-between gap-8 mb-16 flex-wrap">
+          <div>
+            <span className="section-label">Services</span>
+            <h2 className="section-title">What I can <span className="gradient-text">do for you</span></h2>
+          </div>
+          <p className="section-body text-sm max-w-xs" style={{ color: 'var(--text4)' }}>
+            End-to-end development from a single feature to a full product.
+          </p>
+        </div>
+        <div className="sv-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {services.map((svc, i) => (
+            <div key={svc.title}
+              className="svc-card p-7 rounded-2xl glass glass-hover cursor-default"
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(0,234,255,0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}
+              style={{ transition: 'all 0.25s ease' }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-6"
+                style={{ background: 'var(--accent-dim)', border: '1px solid rgba(0,234,255,0.15)' }}>
+                <svc.icon size={18} style={{ color: 'var(--accent)', opacity: 0.9 }} />
+              </div>
+              <h3 className="font-heading font-semibold text-sm text-white mb-3">{svc.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text4)' }}>{svc.description}</p>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

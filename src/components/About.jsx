@@ -1,128 +1,118 @@
-import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
-import { HiCode, HiLightningBolt, HiUsers, HiCollection } from 'react-icons/hi';
+import { useRef, useState, useEffect } from 'react';
+import { gsap } from '../lib/gsap';
 import { aboutData } from '../data/portfolioData';
 
-const iconMap = [HiLightningBolt, HiCollection, HiCode, HiUsers];
-
-// Animated counter hook
-function useCounter(target, inView) {
-    const [count, setCount] = useState(0);
-    const num = parseInt(target);
-
-    useEffect(() => {
-        if (!inView) return;
-        const controls = animate(0, num, {
-            duration: 1.8,
-            ease: [0.22, 1, 0.36, 1],
-            onUpdate: (v) => setCount(Math.round(v)),
-        });
-        return () => controls.stop();
-    }, [inView, num]);
-
-    return count + target.replace(/[\d]/g, '');
-}
-
-function CounterCard({ item, index, inView }) {
-    const Icon = iconMap[index];
-    const animatedValue = useCounter(item.value, inView);
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.15 * index, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ y: -6, scale: 1.04 }}
-            className="glass-card p-6 text-center group cursor-default"
-        >
-            <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={inView ? { scale: 1, rotate: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15 * index + 0.2, type: 'spring', stiffness: 200 }}
-                className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary-500 transition-colors duration-300"
-            >
-                <Icon className="text-primary-500 group-hover:text-white transition-colors duration-300" size={22} />
-            </motion.div>
-            <p className="text-2xl md:text-3xl font-bold gradient-text mb-1">{animatedValue}</p>
-            <p className="text-sm text-dark-500 dark:text-dark-400 font-medium">{item.label}</p>
-        </motion.div>
-    );
+function Counter({ value, label }) {
+  const ref = useRef(null);
+  const [count, setCount] = useState(0);
+  const ran = useRef(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !ran.current) {
+        ran.current = true;
+        const num = parseInt(value) || 0;
+        let cur = 0; const step = Math.ceil(num / 40);
+        const t = setInterval(() => { cur = Math.min(cur + step, num); setCount(cur); if (cur >= num) clearInterval(t); }, 28);
+      }
+    }, { threshold: 0.7 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [value]);
+  return (
+    <div ref={ref}>
+      <p className="font-heading font-bold text-white" style={{ fontSize: 'clamp(2rem,4vw,2.8rem)', letterSpacing:'-0.03em' }}>
+        {count}<span style={{ color: 'var(--accent)' }}>+</span>
+      </p>
+      <p className="mono text-xs tracking-widest uppercase mt-1" style={{ color: 'var(--text4)' }}>{label}</p>
+    </div>
+  );
 }
 
 export default function About() {
-    const titleRef = useRef(null);
-    const textRef = useRef(null);
-    const statsRef = useRef(null);
-    const titleInView = useInView(titleRef, { once: true, margin: '-60px' });
-    const textInView = useInView(textRef, { once: true, margin: '-60px' });
-    const statsInView = useInView(statsRef, { once: true, margin: '-60px' });
+  const ref = useRef(null);
 
-    const cards = [
-        { icon: HiCode, title: 'Who I Am', content: aboutData.intro },
-        { icon: HiLightningBolt, title: 'My Goal', content: aboutData.objective },
-    ];
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('.ab-heading', {
+        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ab-heading', start: 'top 82%' },
+      });
+      gsap.from('.ab-image', {
+        x: -50, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.ab-image', start: 'top 80%' },
+      });
+      gsap.from('.ab-text', {
+        y: 35, opacity: 0, duration: 0.7, stagger: 0.13, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ab-text-group', start: 'top 78%' },
+      });
+      gsap.from('.ab-kv', {
+        y: 20, opacity: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out',
+        scrollTrigger: { trigger: '.ab-kv-list', start: 'top 80%' },
+      });
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-    return (
-        <section id="about" className="relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+  return (
+    <section id="about" ref={ref} className="relative">
+      <div className="section-container">
+        <div className="ab-heading mb-16">
+          <span className="section-label">About Me</span>
+          <h2 className="section-title">
+            Focused on <span className="gradient-text">real outcomes</span>
+          </h2>
+        </div>
 
-            <div className="section-container relative z-10">
-                <motion.div
-                    ref={titleRef}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <h2 className="section-title">
-                        About <span className="gradient-text">Me</span>
-                    </h2>
-                    <p className="section-subtitle">Get to know who I am and what drives me</p>
-                </motion.div>
-
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    {/* Left — Text cards */}
-                    <div ref={textRef} className="space-y-6">
-                        {cards.map((card, i) => (
-                            <motion.div
-                                key={card.title}
-                                initial={{ opacity: 0, x: -60 }}
-                                animate={textInView ? { opacity: 1, x: 0 } : {}}
-                                transition={{
-                                    duration: 0.6,
-                                    delay: i * 0.2,
-                                    ease: [0.22, 1, 0.36, 1],
-                                }}
-                                whileHover={{ x: 6, transition: { duration: 0.2 } }}
-                                className="glass-card p-6 md:p-8"
-                            >
-                                <h3 className="text-lg font-semibold text-dark-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <motion.span
-                                        initial={{ scale: 0 }}
-                                        animate={textInView ? { scale: 1 } : {}}
-                                        transition={{ delay: i * 0.2 + 0.3, type: 'spring', stiffness: 300 }}
-                                        className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center"
-                                    >
-                                        <card.icon className="text-primary-500" size={18} />
-                                    </motion.span>
-                                    {card.title}
-                                </h3>
-                                <p className="text-dark-600 dark:text-dark-300 leading-relaxed">
-                                    {card.content}
-                                </p>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Right — Stats grid with counters */}
-                    <div ref={statsRef}>
-                        <div className="grid grid-cols-2 gap-4 w-full">
-                            {aboutData.highlights.map((item, i) => (
-                                <CounterCard key={item.label} item={item} index={i} inView={statsInView} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-stretch">
+          {/* Left */}
+          <div className="flex flex-col justify-between h-full">
+            <div className="ab-image relative w-fit mb-12 lg:mb-0">
+              <div className="w-56 h-64 sm:w-64 sm:h-72 rounded-2xl overflow-hidden"
+                style={{ border: '1px solid var(--glass-border)' }}>
+                <img src="/Profile-Sahil.jpeg" alt="Sahil Sharma" loading="lazy"
+                  className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="absolute -bottom-3 -right-3 w-full h-full rounded-2xl -z-10"
+                style={{ border: '1px solid rgba(0,234,255,0.12)' }} />
+              <div className="absolute -bottom-5 left-4 glass rounded-xl px-3 py-2 flex items-center gap-2">
+                <span className="status-dot" />
+                <span className="mono text-xs" style={{ color: 'var(--text4)' }}>Open to work</span>
+              </div>
             </div>
-        </section>
-    );
+            <div className="grid grid-cols-2 gap-8 pt-4">
+              {aboutData.highlights.map((h) => (
+                <Counter key={h.label} value={h.value.replace(/\D/g,'')||'1'} label={h.label} />
+              ))}
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="ab-text-group flex flex-col justify-between h-full pt-2">
+            <div className="space-y-4 mb-8">
+              {aboutData.paragraphs.map((text, i) => (
+                <p key={i} className="ab-text section-body text-[15px] leading-[1.8]">{text}</p>
+              ))}
+            </div>
+            
+            <div className="w-full">
+              <div className="ab-text h-px mb-6" style={{ background: 'var(--line)' }} />
+            <ul className="ab-kv-list space-y-4">
+              {[
+                { label: 'Currently',   value: 'Tata Consultancy Services' },
+                { label: 'Experience',  value: 'India · Europe · Africa' },
+                { label: 'Recognition', value: 'Amazon ML Summer School 2024' },
+                { label: 'Education',   value: 'B.Tech CSE · ITER, SOA University' },
+              ].map((item) => (
+                <li key={item.label} className="ab-kv flex items-baseline gap-4 text-sm">
+                  <span className="mono shrink-0 text-xs tracking-wider" style={{ color: 'var(--text4)', width: 86 }}>{item.label}</span>
+                  <span style={{ color: 'var(--text2)' }}>{item.value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  );
 }

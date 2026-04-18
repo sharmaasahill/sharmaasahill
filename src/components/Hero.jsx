@@ -1,221 +1,142 @@
-import { motion } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-scroll';
-import { FiDownload, FiArrowRight } from 'react-icons/fi';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FiArrowRight, FiDownload } from 'react-icons/fi';
+import { gsap } from '../lib/gsap';
+import MagneticButton from './MagneticButton';
 import { heroData, contactInfo } from '../data/portfolioData';
 
+const ROLES = ['Full Stack Developer', 'Backend Engineer', 'Freelancer', 'Problem Solver'];
+
+function useTypewriter(words, speed = 80, pause = 2200) {
+  const [display, setDisplay] = useState('');
+  
+  useEffect(() => {
+    let timeout;
+    let wi = 0; let ci = 0; let isDel = false;
+
+    const tick = () => {
+      const word = words[wi % words.length];
+      if (!isDel && ci <= word.length) {
+        setDisplay(word.slice(0, ci));
+        ci++;
+        timeout = setTimeout(tick, speed);
+      } else if (!isDel && ci > word.length) {
+        isDel = true;
+        timeout = setTimeout(tick, pause);
+      } else if (isDel && ci > 0) {
+        setDisplay(word.slice(0, ci - 1));
+        ci--;
+        timeout = setTimeout(tick, speed / 2);
+      } else {
+        isDel = false;
+        wi++;
+        ci = 0;
+        timeout = setTimeout(tick, speed);
+      }
+    };
+
+    timeout = setTimeout(tick, speed);
+    return () => clearTimeout(timeout);
+  }, [words, speed, pause]);
+
+  return display;
+}
+
 export default function Hero() {
-    return (
-        <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
-            {/* Background gradient blobs */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-3xl" />
-                <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-primary-400/10 dark:bg-primary-400/5 rounded-full blur-3xl" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-300/5 dark:bg-primary-600/5 rounded-full blur-3xl" />
-            </div>
+  const ref = useRef(null);
+  const role = useTypewriter(ROLES);
 
-            <div className="section-container relative z-10 w-full">
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    {/* Left — Text content */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, ease: 'easeOut' }}
-                        className="order-2 lg:order-1 text-center lg:text-left"
-                    >
-                        {/* Greeting badge */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2, duration: 0.6 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-950/50 border border-primary-200 dark:border-primary-800/50 mb-6"
-                        >
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                                Available for freelance projects
-                            </span>
-                        </motion.div>
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.fromTo('.h-badge',   { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.2)
+        .fromTo('.h-eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.4)
+        .fromTo('.h-name',    { y: 60, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 1.0 }, 0.55)
+        .fromTo('.h-role',    { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7 }, 0.9)
+        .fromTo('.h-tagline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 1.05)
+        .fromTo('.h-actions', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.2)
+        .fromTo('.h-socials', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.35)
+        .fromTo('.h-scroll',  { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.7);
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.6 }}
-                            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4"
-                        >
-                            <span className="text-dark-900 dark:text-white">{heroData.greeting}</span>
-                            <br />
-                            <span className="gradient-text">{heroData.name}</span>
-                        </motion.h1>
+  return (
+    <section id="hero" ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <div className="section-container w-full">
+        <div className="max-w-3xl">
+          {/* Status */}
+          <div className="h-badge flex items-center gap-2.5 mb-10">
+            <span className="status-dot" />
+            <span className="mono text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text3)' }}>
+              Available for work
+            </span>
+          </div>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4, duration: 0.6 }}
-                            className="flex items-center gap-3 justify-center lg:justify-start mb-6"
-                        >
-                            <div className="h-px w-8 bg-primary-500" />
-                            <p className="text-lg md:text-xl font-semibold text-primary-500 dark:text-primary-400">
-                                {heroData.title}
-                            </p>
-                        </motion.div>
+          <div className="h-eyebrow mono text-xs tracking-[0.2em] uppercase mb-5" style={{ color: 'var(--accent)' }}>
+            {heroData.greeting}
+          </div>
 
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.6 }}
-                            className="text-base md:text-lg text-dark-500 dark:text-dark-400 max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed"
-                        >
-                            {heroData.tagline}
-                        </motion.p>
+          {/* Name — the key element */}
+          <h1
+            className="h-name font-heading font-bold text-white"
+            style={{
+              fontSize: 'clamp(2.8rem, 10vw, 7.5rem)',
+              letterSpacing: '-0.04em',
+              lineHeight: 1.0,
+              marginBottom: '1.5rem',
+            }}
+          >
+            {heroData.name}
+          </h1>
 
-                        {/* CTA Buttons */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6, duration: 0.6 }}
-                            className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mb-8"
-                        >
-                            <Link
-                                to="projects"
-                                smooth
-                                offset={-80}
-                                duration={500}
-                                className="btn-primary cursor-pointer"
-                            >
-                                See My Work <FiArrowRight />
-                            </Link>
+          {/* Role */}
+          <div className="h-role flex items-center gap-3 mb-8">
+            <div style={{ width: 28, height: 1, background: 'var(--accent)', opacity: 0.45 }} />
+            <span className="font-heading font-medium text-xl md:text-2xl" style={{ color: 'var(--text2)', minWidth: '22ch' }}>
+              Product Engineer
+              <span className="inline-block w-0.5 h-6 ml-0.5 align-middle animate-blink" style={{ background: 'var(--accent)' }} />
+            </span>
+          </div>
 
-                            <a
-                                href={heroData.resumeUrl}
-                                download="_Sahil_Sharma_SDE.pdf"
-                                className="btn-outline"
-                            >
-                                <FiDownload /> Download Resume
-                            </a>
+          <p className="h-tagline section-body mb-12 max-w-lg" style={{ color: '#d1d5db' }}>{heroData.tagline}</p>
 
-                            <Link
-                                to="contact"
-                                smooth
-                                offset={-80}
-                                duration={500}
-                                className="px-6 py-3 text-dark-600 dark:text-dark-300 font-medium hover:text-primary-500 dark:hover:text-primary-400 transition-colors cursor-pointer"
-                            >
-                                Let's Talk →
-                            </Link>
-                        </motion.div>
+          <div className="h-actions flex flex-wrap items-center gap-4 mb-14">
+            <MagneticButton>
+              <Link to="projects" smooth offset={0} duration={600} className="btn-primary cursor-pointer">
+                See My Work <FiArrowRight size={14} />
+              </Link>
+            </MagneticButton>
+            <MagneticButton>
+              <a href={heroData.resumeUrl} download className="btn-outline">
+                <FiDownload size={14} /> Resume
+              </a>
+            </MagneticButton>
+          </div>
 
-                        {/* Social links */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8, duration: 0.6 }}
-                            className="flex items-center gap-4 justify-center lg:justify-start"
-                        >
-                            {contactInfo.socials.slice(0, 4).map((social) => (
-                                <a
-                                    key={social.name}
-                                    href={social.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-3 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-500 dark:text-dark-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all"
-                                    aria-label={social.name}
-                                >
-                                    <social.icon size={20} />
-                                </a>
-                            ))}
-                        </motion.div>
-                    </motion.div>
+          <div className="h-socials flex items-center gap-5">
+            {contactInfo.socials.slice(0, 4).map((s) => (
+              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}
+                className="transition-all duration-200 hover:scale-110"
+                style={{ color: 'var(--text3)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
+                <s.icon size={18} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                    {/* Right — Profile visual */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                        className="order-1 lg:order-2 flex justify-center"
-                    >
-                        <div className="relative">
-                            {/* Outer glow ring */}
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 blur-2xl opacity-20 dark:opacity-30 scale-110 animate-glow" />
-
-                            {/* Profile circle */}
-                            <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 p-1 animate-float">
-                                <div className="w-full h-full rounded-full bg-dark-50 dark:bg-dark-900 flex items-center justify-center overflow-hidden">
-                                    <img src="/Profile-Sahil.jpeg" alt="Sahil Sharma" className="w-full h-full object-cover scale-100 object-[center_2%]" />
-                                </div>
-                            </div>
-
-                            {/* Floating tech badges */}
-                            <motion.div
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                                className="absolute -top-2 -right-2 sm:top-2 sm:right-2 glass-card px-3 py-2 sm:px-4 sm:py-2.5"
-                            >
-                                <span className="text-xs sm:text-sm font-semibold text-dark-700 dark:text-dark-200 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#61DAFB]"></span>React
-                                </span>
-                            </motion.div>
-
-                            <motion.div
-                                animate={{ y: [0, 10, 0] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                                className="absolute -bottom-2 -left-2 sm:bottom-4 sm:left-0 glass-card px-3 py-2 sm:px-4 sm:py-2.5"
-                            >
-                                <span className="text-xs sm:text-sm font-semibold text-dark-700 dark:text-dark-200 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#339933]"></span>Node.js
-                                </span>
-                            </motion.div>
-
-                            <motion.div
-                                animate={{ y: [0, -8, 0] }}
-                                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                                className="absolute top-1/2 -left-8 sm:-left-16 glass-card px-3 py-2 sm:px-4 sm:py-2.5"
-                            >
-                                <span className="text-xs sm:text-sm font-semibold text-dark-700 dark:text-dark-200 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#3776AB]"></span>Python
-                                </span>
-                            </motion.div>
-
-                            <motion.div
-                                animate={{ y: [0, 8, 0] }}
-                                transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-                                className="absolute top-6 -left-4 sm:top-8 sm:-left-10 glass-card px-3 py-2 sm:px-4 sm:py-2.5"
-                            >
-                                <span className="text-xs sm:text-sm font-semibold text-dark-700 dark:text-dark-200 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#888888]"></span>Next.js
-                                </span>
-                            </motion.div>
-
-                            <motion.div
-                                animate={{ y: [0, -6, 0] }}
-                                transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-                                className="absolute -bottom-4 right-4 sm:-bottom-2 sm:right-8 glass-card px-3 py-2 sm:px-4 sm:py-2.5"
-                            >
-                                <span className="text-xs sm:text-sm font-semibold text-dark-700 dark:text-dark-200 flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#3178C6]"></span>TypeScript
-                                </span>
-                            </motion.div>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
-
-            {/* Scroll indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2, duration: 0.6 }}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            >
-                <Link to="about" smooth offset={-80} duration={500} className="cursor-pointer">
-                    <div className="w-6 h-10 rounded-full border-2 border-dark-300 dark:border-dark-600 flex justify-center pt-2">
-                        <motion.div
-                            animate={{ y: [0, 8, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                            className="w-1.5 h-1.5 rounded-full bg-primary-500"
-                        />
-                    </div>
-                </Link>
-            </motion.div>
-        </section>
-    );
+      {/* Scroll indicator */}
+      <div className="h-scroll absolute bottom-10 left-1/2 -translate-x-1/2">
+        <Link to="about" smooth offset={0} duration={600} className="cursor-pointer flex flex-col items-center gap-2">
+          <span className="mono text-[10px] tracking-[0.25em] uppercase" style={{ color: 'var(--text5)' }}>scroll</span>
+          <div className="w-4 h-7 rounded-full border flex justify-center pt-1.5" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+            <div className="w-0.5 h-2 rounded-full" style={{ background: 'var(--accent)', animation: 'bob 1.8s ease-in-out infinite' }} />
+          </div>
+        </Link>
+      </div>
+    </section>
+  );
 }
