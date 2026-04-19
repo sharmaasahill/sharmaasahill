@@ -43,11 +43,11 @@ function ProjectCard({ project, index }) {
   return (
     <div
       ref={cardRef}
-      className={`project-card-item relative flex flex-col rounded-2xl overflow-hidden group ${project.title.includes('View All') ? 'cursor-pointer' : ''}`}
+      className="project-card-item relative flex flex-col rounded-2xl overflow-hidden group cursor-pointer"
       onClick={(e) => {
         if (e.target.closest('a')) return;
-        if (project.title.includes('View All')) {
-          window.open('https://github.com/sharmaasahill?tab=repositories', '_blank');
+        if (project.githubUrl && project.githubUrl !== '#') {
+          window.open(project.githubUrl, '_blank');
         }
       }}
       onMouseMove={onMove}

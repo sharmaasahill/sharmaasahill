@@ -101,7 +101,7 @@ export const projects = [
         tech: ['TypeScript', 'Next.js', 'NestJS'],
         image: null,
         liveUrl: '#',
-        githubUrl: 'https://github.com/sharmaasahill/ticket-dashboard',
+        githubUrl: 'https://github.com/sharmaasahill/pulse',
     },
     {
         title: 'AI Lead Scoring API',
