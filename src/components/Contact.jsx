@@ -148,13 +148,15 @@ export default function Contact() {
             <div className="p-6 rounded-2xl glass">
               <p className="mono text-xs mb-4" style={{color:'var(--text5)'}}>DIRECT</p>
               <div className="space-y-3">
-                <a href="mailto:i.sahilkrsharma@gmail.com" className="flex items-center gap-3 text-sm transition-colors duration-200" style={{color:'var(--text4)'}}
-                  onMouseEnter={e=>e.currentTarget.style.color='var(--text2)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text4)'}>
+                <a href="mailto:i.sahilkrsharma@gmail.com" className="flex items-center gap-3 text-sm transition-all duration-300" style={{color:'var(--text4)', transform: 'translateX(0px)'}}
+                  onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='translateX(4px)';}} 
+                  onMouseLeave={e=>{e.currentTarget.style.color='var(--text4)'; e.currentTarget.style.transform='translateX(0px)';}}>
                   <FiMail size={13}/> i.sahilkrsharma@gmail.com
                 </a>
                 {contactInfo.socials.map(s=>(
-                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm transition-colors duration-200" style={{color:'var(--text4)'}}
-                    onMouseEnter={e=>e.currentTarget.style.color='var(--text2)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text4)'}>
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm transition-all duration-300" style={{color:'var(--text4)', transform: 'translateX(0px)'}}
+                    onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='translateX(4px)';}} 
+                    onMouseLeave={e=>{e.currentTarget.style.color='var(--text4)'; e.currentTarget.style.transform='translateX(0px)';}}>
                     <s.icon size={13}/> {s.name}
                   </a>
                 ))}

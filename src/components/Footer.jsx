@@ -16,10 +16,10 @@ export default function Footer() {
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {navLinks.map((l) => (
               <Link key={l.to} to={l.to} smooth offset={-72} duration={500}
-                className="mono text-xs cursor-pointer transition-colors duration-200"
-                style={{ color: 'var(--text5)' }}
-                onMouseEnter={e=>e.target.style.color='var(--text2)'}
-                onMouseLeave={e=>e.target.style.color='var(--text5)'}>
+                className="mono text-xs cursor-pointer transition-all duration-300 inline-block"
+                style={{ color: 'var(--text5)', transform: 'translateY(0)' }}
+                onMouseEnter={e=>{e.target.style.color='var(--accent)'; e.target.style.transform='translateY(-2px)';}}
+                onMouseLeave={e=>{e.target.style.color='var(--text5)'; e.target.style.transform='translateY(0)';}}>
                 {l.name}
               </Link>
             ))}
@@ -27,8 +27,9 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             {contactInfo.socials.slice(0,4).map(s=>(
               <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}
-                className="transition-colors duration-200" style={{ color: 'var(--text5)' }}
-                onMouseEnter={e=>e.currentTarget.style.color='#fff'} onMouseLeave={e=>e.currentTarget.style.color='var(--text5)'}>
+                className="transition-all duration-300 inline-block" style={{ color: 'var(--text5)', transform: 'translateY(0)' }}
+                onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='translateY(-3px)';}} 
+                onMouseLeave={e=>{e.currentTarget.style.color='var(--text5)'; e.currentTarget.style.transform='translateY(0)';}}>
                 <s.icon size={15}/>
               </a>
             ))}

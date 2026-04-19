@@ -12,15 +12,15 @@
 
   --white:  #ffffff;
   --text1:  #ffffff;
-  --text2:  #d1d5db;   /* was #a1a1aa — brighter secondary */
-  --text3:  #9ca3af;   /* was #71717a */
-  --text4:  #6b7280;   /* was #52525b */
-  --text5:  #4b5563;   /* was #3f3f46 */
+  --text2:  #e5e7eb;   /* ↑ was #d1d5db — primary secondary text */
+  --text3:  #c4c9d4;   /* ↑ was #9ca3af — tertiary labels */
+  --text4:  #9ba3af;   /* ↑ was #6b7280 — muted elements */
+  --text5:  #72818f;   /* ↑ was #4b5563 — very muted / hints */
 
-  --glass-bg:     rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.10);
-  --glass-hover:  rgba(255, 255, 255, 0.08);
-  --line:         rgba(255, 255, 255, 0.09);
+  --glass-bg:     rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-hover:  rgba(255, 255, 255, 0.10);
+  --line:         rgba(255, 255, 255, 0.12);
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -239,7 +239,7 @@ html.lenis, html.lenis body { height: auto; }
   display: inline-flex; align-items: center; gap: 8px;
   padding: 9px 14px; border-radius: 12px;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-  color: #d1d5db; font-size: 13px; font-weight: 500;
+  color: #c4c9d4; font-size: 13px; font-weight: 500;
   transition: all 0.22s ease; cursor: default;
   will-change: transform;
 }

@@ -165,7 +165,7 @@ export const experiences = [
     },
     {
         company: 'Amazon',
-        role: 'ML Summer School 2024 Trainee',
+        role: 'ML Summer School 2024',
         duration: 'Jul 2024',
         type: 'Selected Participant',
         location: 'Remote',

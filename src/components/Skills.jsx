@@ -78,8 +78,10 @@ export default function Skills() {
           <div className="absolute right-0 inset-y-0 w-16 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #000, transparent)' }} />
           <div className="flex gap-3 animate-marquee" style={{ width: 'max-content' }}>
             {[...EXTRA, ...EXTRA].map((t, i) => (
-              <span key={i} className="mono text-xs px-3 py-1.5 rounded-lg shrink-0"
-                style={{ color: 'var(--text4)', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)' }}>
+              <span key={i} className="mono text-xs px-3 py-1.5 rounded-lg shrink-0 transition-all duration-300 cursor-default"
+                style={{ color: '#fff', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', transform: 'translateY(0)' }}
+                onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.borderColor='rgba(0,234,255,0.3)';}}
+                onMouseLeave={e=>{e.currentTarget.style.color='#fff'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.borderColor='var(--glass-border)';}}>
                 {t}
               </span>
             ))}
