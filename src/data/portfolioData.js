@@ -141,16 +141,16 @@ export const projects = [
 export const experiences = [
     {
         company: 'Tata Consultancy Services',
-        role: 'Assistant System Engineer',
+        role: 'Cloud Application Engineer',
         duration: 'Dec 2025 – Present',
         type: 'Full-time',
-        location: 'Chennai, Tamil Nadu, India · On-site',
+        location: 'Bengaluru, Karnataka, India · On-site',
         description: 'Working with cross-functional teams on enterprise-level systems. Learning how large-scale software is built, maintained, and shipped in production.',
     },
     {
         company: 'F-Bridge Africa',
         role: 'Software Developer Intern',
-        duration: 'Oct 2025 – Dec 2025',
+        duration: 'July 2025 – Dec 2025',
         type: 'Internship',
         location: 'Lagos State, Nigeria · Remote',
         description: 'Built the backend from scratch with API endpoints, admin panel, full CRUD. Node.js, Express, PostgreSQL. Shipped everything they asked for.',
