@@ -56,7 +56,7 @@ export default function Navbar() {
               onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
               onMouseLeave={e => e.currentTarget.style.color = '#fff'}
             >
-              Sahil Sharma
+              sharmaasahill
             </span>
           </Link>
 
@@ -108,9 +108,10 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href="mailto:i.sahilkrsharma@gmail.com" className="hidden md:inline-flex btn-primary text-xs py-2 px-4">
+            <Link to="contact-form" smooth offset={-90} duration={600}
+              className="hidden md:inline-flex btn-primary text-xs py-2 px-4 cursor-pointer">
               Hire Me
-            </a>
+            </Link>
             <button onClick={() => setMenuOpen(!menuOpen)}
               className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-white"
               style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
@@ -137,11 +138,13 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              <motion.a href="mailto:i.sahilkrsharma@gmail.com" onClick={() => setMenuOpen(false)}
-                className="btn-primary mt-8 w-64 justify-center"
+              <motion.div className="mt-8 w-64"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: navLinks.length*0.05+0.05 }}>
-                Hire Me
-              </motion.a>
+                <Link to="contact-form" smooth offset={-90} duration={600} onClick={() => setMenuOpen(false)}
+                  className="btn-primary w-full justify-center cursor-pointer">
+                  Hire Me
+                </Link>
+              </motion.div>
             </nav>
           </motion.div>
         )}

@@ -241,7 +241,7 @@ export default function Contact() {
               </div>
             </div>
           </div>
-          <div className="ct-col p-7 rounded-2xl glass">
+          <div id="contact-form" className="ct-col p-7 rounded-2xl glass" style={{ scrollMarginTop: '96px' }}>
             <p className="mono text-xs mb-6" style={{color:'var(--text5)'}}>SEND A MESSAGE</p>
             <ContactForm/>
           </div>
