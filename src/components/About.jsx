@@ -126,7 +126,7 @@ export default function About() {
               {[
                 { label: 'Currently',   value: 'Tata Consultancy Services' },
                 { label: 'Experience',  value: 'India · Europe · Africa' },
-                { label: 'Recognition', value: 'Amazon ML Summer School 2024' },
+                { label: 'Recognition', value: 'Amazon ML Summer School 2024 · AWS Cloud Practitioner' },
                 { label: 'Education',   value: 'B.Tech CSE · ITER, SOA University' },
               ].map((item) => (
                 <li key={item.label} className="ab-kv flex items-baseline gap-4 text-sm">

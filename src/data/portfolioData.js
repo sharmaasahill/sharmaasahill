@@ -21,7 +21,7 @@ export const navLinks = [
 export const heroData = {
     greeting: 'Hello, I\'m',
     name: 'Sahil Sharma',
-    title: 'Product Engineer',
+    title: 'Software Engineer',
     tagline: 'I build fast, scalable web applications that look great and work even better. Whether you need a complete product or a single feature, I take it from idea to launch.',
     resumeUrl: '/_Sahil_Sharma_SDE.pdf',
 };

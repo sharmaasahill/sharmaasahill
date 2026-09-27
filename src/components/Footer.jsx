@@ -11,7 +11,7 @@ export default function Footer() {
             <Link to="hero" smooth duration={600} className="cursor-pointer">
               <span className="font-heading font-bold text-sm text-white">Sahil Sharma</span>
             </Link>
-            <p className="mono text-xs mt-1" style={{ color: 'var(--text5)' }}>Product Engineer</p>
+            <p className="mono text-xs mt-1" style={{ color: 'var(--text5)' }}>Software Engineer</p>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {navLinks.map((l) => (

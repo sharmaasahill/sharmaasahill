@@ -1,5 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 import { Link } from 'react-scroll';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { gsap } from '../lib/gsap';
@@ -8,20 +7,10 @@ import useMouseParallax from '../hooks/useMouseParallax';
 import useMediaQuery from '../hooks/useMediaQuery';
 import { heroData, contactInfo } from '../data/portfolioData';
 
-const ROLES = ['Product Engineer', 'Systems Engineer', 'Problem Solver'];
-
 export default function Hero() {
   const ref = useRef(null);
-  const [roleIndex, setRoleIndex] = useState(0);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const parallax = useMouseParallax(isMobile ? 0 : 0.012);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % ROLES.length);
-    }, 2600);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -87,22 +76,11 @@ export default function Hero() {
             </h1>
           </div>
 
-          {/* Rotating Role Tiles */}
-          <div className="h-role flex items-center gap-3 mb-8 overflow-hidden" style={{ minWidth: '22ch', height: '42px' }}>
+          {/* Role */}
+          <div className="h-role flex items-center gap-3 mb-8" style={{ height: '42px' }}>
             <div style={{ width: 28, height: 1, background: 'var(--accent)', opacity: 0.45, flexShrink: 0 }} />
             <div className="font-heading font-medium text-xl md:text-2xl flex items-center" style={{ color: 'var(--text2)' }}>
-              <AnimatePresence mode="popLayout">
-                <motion.span
-                  key={roleIndex}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="inline-block whitespace-nowrap"
-                >
-                  {ROLES[roleIndex]}
-                </motion.span>
-              </AnimatePresence>
+              <span className="inline-block whitespace-nowrap">{heroData.title}</span>
               <span className="inline-block w-0.5 h-6 ml-2 align-middle animate-blink" style={{ background: 'var(--accent)', flexShrink: 0 }} />
             </div>
           </div>

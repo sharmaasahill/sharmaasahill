@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { gsap } from '../lib/gsap';
 import MagneticButton from './MagneticButton';
 import { contactInfo } from '../data/portfolioData';
-import { FiSend, FiMail } from 'react-icons/fi';
+import { FiSend, FiMail, FiCheck, FiAlertCircle } from 'react-icons/fi';
 
 const CMDS = {
   help:     () => ['  Commands: email · linkedin · github · hire · clear'],
@@ -70,43 +70,125 @@ function Terminal() {
   );
 }
 
+const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
+const ENDPOINT = 'https://api.web3forms.com/submit';
+
 function ContactForm() {
-  const [form, setForm] = useState({ name:'', email:'', message:'' });
-  const [status, setStatus] = useState('idle');
-  const onChange = e => setForm({...form, [e.target.name]: e.target.value});
+  const [form, setForm] = useState({ name:'', email:'', message:'', botcheck:'' });
+  const [status, setStatus] = useState('idle');   // idle | sending | success | error
+  const [error, setError]   = useState('');
+
+  const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
   const onSubmit = async e => {
-    e.preventDefault(); setStatus('sending');
-    await new Promise(r => setTimeout(r, 900));
-    window.open(`mailto:i.sahilkrsharma@gmail.com?subject=Contact from ${form.name}&body=${encodeURIComponent(form.message)}%0A%0AFrom: ${form.email}`);
-    setStatus('sent');
+    e.preventDefault();
+
+    // Honeypot — a bot filled the hidden field. Bail silently without a false success.
+    if (form.botcheck) return;
+
+    if (!ACCESS_KEY) {
+      setStatus('error');
+      setError('Form is not configured (missing access key). Please email me directly.');
+      return;
+    }
+
+    setStatus('sending');
+    setError('');
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          subject: `Portfolio contact from ${form.name}`,
+          from_name: 'sharmaasahill.com',
+          replyto: form.email,
+        }),
+      });
+
+      let data = null;
+      try { data = await res.json(); } catch { /* non-JSON response */ }
+
+      if (res.ok && data?.success) {
+        setStatus('success');
+        setForm({ name:'', email:'', message:'', botcheck:'' });
+        return;
+      }
+
+      // Real failure — surface what the API actually said.
+      setStatus('error');
+      setError(data?.message || `Request failed (HTTP ${res.status} ${res.statusText}).`);
+    } catch (err) {
+      setStatus('error');
+      setError(
+        err instanceof TypeError
+          ? 'Network error — could not reach the mail service. Check your connection and retry.'
+          : err?.message || 'Something went wrong. Please try again.'
+      );
+    }
   };
+
   const iStyle = { background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius:10, padding:'11px 15px', fontSize:14, color:'#fff', outline:'none', width:'100%', fontFamily:'Inter,sans-serif', transition:'border-color 0.2s ease' };
+  const disabled = status === 'sending' || status === 'success';
+
   return (
     <form onSubmit={onSubmit} autoComplete="off" className="space-y-4">
       <div className="grid sm:grid-cols-2 gap-4">
         {[{label:'Name',name:'name',type:'text',ph:'Your name'},{label:'Email',name:'email',type:'email',ph:'you@email.com'}].map(f=>(
           <div key={f.name}>
-            <label className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>{f.label}</label>
-            <input type={f.type} name={f.name} value={form[f.name]} onChange={onChange} required autoComplete="off" placeholder={f.ph} style={iStyle}
+            <label htmlFor={`cf-${f.name}`} className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>{f.label}</label>
+            <input id={`cf-${f.name}`} type={f.type} name={f.name} value={form[f.name]} onChange={onChange} required disabled={disabled} autoComplete="off" placeholder={f.ph} style={iStyle}
               onFocus={e=>{e.target.style.borderColor='rgba(0,234,255,0.3)';}}
               onBlur={e=>{e.target.style.borderColor='var(--glass-border)';}} />
           </div>
         ))}
       </div>
       <div>
-        <label className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>Message</label>
-        <textarea name="message" value={form.message} onChange={onChange} required rows={5} placeholder="Tell me about your project…"
+        <label htmlFor="cf-message" className="mono text-xs block mb-1.5" style={{color:'var(--text5)'}}>Message</label>
+        <textarea id="cf-message" name="message" value={form.message} onChange={onChange} required disabled={disabled} rows={5} placeholder="Tell me about your project…"
           style={{...iStyle,resize:'none'}}
           onFocus={e=>{e.target.style.borderColor='rgba(0,234,255,0.3)';}}
           onBlur={e=>{e.target.style.borderColor='var(--glass-border)';}} />
       </div>
+
+      {/* Honeypot — hidden from humans, catches bots */}
+      <input type="checkbox" name="botcheck" tabIndex={-1} aria-hidden="true"
+        checked={!!form.botcheck}
+        onChange={e => setForm({ ...form, botcheck: e.target.checked ? '1' : '' })}
+        style={{ display: 'none' }} />
+
       <MagneticButton className="w-full">
-        <button type="submit" disabled={status!=='idle'} className="btn-primary w-full justify-center">
-          {status==='idle'&&<><FiSend size={14}/>Send Message</>}
-          {status==='sending'&&'Sending…'}
-          {status==='sent'&&'Sent!'}
+        <button type="submit" disabled={disabled} className="btn-primary w-full justify-center">
+          {status==='idle'    && <><FiSend size={14}/>Send Message</>}
+          {status==='sending' && 'Sending…'}
+          {status==='success' && <><FiCheck size={14}/>Message sent</>}
+          {status==='error'   && <><FiSend size={14}/>Retry</>}
         </button>
       </MagneticButton>
+
+      <div aria-live="polite" role="status">
+        {status==='success' && (
+          <p className="mono text-xs flex items-start gap-2" style={{ color:'var(--accent)' }}>
+            <FiCheck size={13} className="shrink-0 mt-0.5" />
+            <span>Delivered. I&apos;ll get back to you soon.</span>
+          </p>
+        )}
+        {status==='error' && (
+          <p className="mono text-xs flex items-start gap-2" style={{ color:'rgba(252,165,165,0.9)' }}>
+            <FiAlertCircle size={13} className="shrink-0 mt-0.5" />
+            <span>
+              {error}{' '}
+              <a href="mailto:i.sahilkrsharma@gmail.com" style={{ textDecoration:'underline' }}>
+                Email me instead
+              </a>.
+            </span>
+          </p>
+        )}
+      </div>
     </form>
   );
 }

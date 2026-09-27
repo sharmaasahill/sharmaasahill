@@ -12,7 +12,7 @@ export default function Services() {
       );
       gsap.fromTo('.svc-card', 
         { y: 40, opacity: 0, scale: 0.96 }, 
-        { y: 0, opacity: 1, scale: 1, duration: 0.65, stagger: { each: 0.09, from: 'start' }, Math: false, ease: 'power3.out', scrollTrigger: { trigger: '.sv-grid', start: 'top 78%', toggleActions: 'play none none none' } }
+        { y: 0, opacity: 1, scale: 1, duration: 0.65, stagger: { each: 0.09, from: 'start' }, ease: 'power3.out', scrollTrigger: { trigger: '.sv-grid', start: 'top 78%', toggleActions: 'play none none none' } }
       );
     }, ref);
     return () => ctx.revert();
@@ -31,7 +31,7 @@ export default function Services() {
           </p>
         </div>
         <div className="sv-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((svc, i) => (
+          {services.map((svc) => (
             <div key={svc.title}
               className="svc-card p-7 rounded-2xl glass glass-hover cursor-default"
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(0,234,255,0.15)'; }}
