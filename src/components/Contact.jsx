@@ -70,8 +70,9 @@ function Terminal() {
   );
 }
 
-const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
-const ENDPOINT = 'https://api.web3forms.com/submit';
+// Our own serverless function. It talks to Resend server-side, so no API key
+// is exposed here and the response is a real delivery result.
+const ENDPOINT = '/api/contact';
 
 function ContactForm() {
   const [form, setForm] = useState({ name:'', email:'', message:'', botcheck:'' });
@@ -83,14 +84,8 @@ function ContactForm() {
   const onSubmit = async e => {
     e.preventDefault();
 
-    // Honeypot — a bot filled the hidden field. Bail silently without a false success.
+    // Honeypot — a bot filled the hidden field. Bail without a false success.
     if (form.botcheck) return;
-
-    if (!ACCESS_KEY) {
-      setStatus('error');
-      setError('Form is not configured (missing access key). Please email me directly.');
-      return;
-    }
 
     setStatus('sending');
     setError('');
@@ -100,13 +95,9 @@ function ContactForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          access_key: ACCESS_KEY,
           name: form.name,
           email: form.email,
           message: form.message,
-          subject: `Portfolio contact from ${form.name}`,
-          from_name: 'sharmaasahill.com',
-          replyto: form.email,
         }),
       });
 
@@ -119,14 +110,19 @@ function ContactForm() {
         return;
       }
 
-      // Real failure — surface what the API actually said.
+      // Real failure — surface what the server actually reported.
       setStatus('error');
-      setError(data?.message || `Request failed (HTTP ${res.status} ${res.statusText}).`);
+      setError(
+        data?.message ||
+        (res.status === 404
+          ? 'Contact endpoint not found. If you are on the Vite dev server, run "vercel dev" instead.'
+          : `Request failed (HTTP ${res.status} ${res.statusText}).`)
+      );
     } catch (err) {
       setStatus('error');
       setError(
         err instanceof TypeError
-          ? 'Network error — could not reach the mail service. Check your connection and retry.'
+          ? 'Network error — could not reach the server. Check your connection and retry.'
           : err?.message || 'Something went wrong. Please try again.'
       );
     }

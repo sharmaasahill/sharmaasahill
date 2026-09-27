@@ -24,8 +24,9 @@ I work across the full stack designing backend systems, building intuitive front
 ---
 
 ### Achievements
-- Top 5% Performer – EY Cyber Security Bootcamp (2024)
+- AWS Cloud Practitioner - AWS (2026)
 - Amazon ML Summer School – Amazon (2024)
+- Top 5% Performer – EY Cyber Security Bootcamp (2024)
 
 ---
 
