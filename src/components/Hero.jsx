@@ -94,7 +94,7 @@ export default function Hero() {
               </Link>
             </MagneticButton>
             <MagneticButton>
-              <a href={heroData.resumeUrl} download className="btn-outline">
+              <a href={heroData.resumeUrl} download="Sahil_Sharma_Software_Engineer_Resume.pdf" className="btn-outline">
                 <FiDownload size={14} /> Resume
               </a>
             </MagneticButton>
