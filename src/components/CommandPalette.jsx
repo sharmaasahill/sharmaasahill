@@ -1,7 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { FiArrowDown, FiArrowUpRight, FiCopy, FiCornerDownLeft, FiHash } from 'react-icons/fi';
+import { FiArrowDown, FiArrowUpRight, FiCopy, FiCornerDownLeft, FiHash, FiMoon, FiSun } from 'react-icons/fi';
 import { builds, links, nav, site } from '../data/portfolioData';
+import { getTheme, toggleTheme } from '../lib/theme';
 
 /*
  * Ctrl/⌘ K: jump to a section, open a build, grab the résumé or copy the email.
@@ -39,7 +40,16 @@ function buildCommands(onCopied) {
     { id: `code-${b.slug}`, group: 'Builds', label: `${b.name}: source`, hint: 'github.com', icon: 'out', href: b.repo },
   ]);
 
+  const next = getTheme() === 'light' ? 'dark' : 'light';
   const elsewhere = [
+    {
+      id: 'theme',
+      group: 'Elsewhere',
+      label: `Switch to the ${next} theme`,
+      hint: 'appearance',
+      icon: next === 'light' ? 'sun' : 'moon',
+      run: toggleTheme,
+    },
     {
       id: 'resume',
       group: 'Elsewhere',
@@ -72,7 +82,7 @@ function buildCommands(onCopied) {
   return [...sections, ...projectCommands, ...elsewhere];
 }
 
-const ICONS = { hash: FiHash, out: FiArrowUpRight, down: FiArrowDown, copy: FiCopy };
+const ICONS = { hash: FiHash, out: FiArrowUpRight, down: FiArrowDown, copy: FiCopy, sun: FiSun, moon: FiMoon };
 
 function score(command, terms) {
   if (!terms.length) return 1;

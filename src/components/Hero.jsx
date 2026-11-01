@@ -3,11 +3,16 @@ import { FiArrowDown, FiArrowUpRight, FiGithub, FiLinkedin, FiMail } from 'react
 import { gsap } from '../lib/gsap';
 import SystemDiagram from './SystemDiagram';
 import useClock from '../hooks/useClock';
+import useTheme from '../hooks/useTheme';
 import { hero, links, site } from '../data/portfolioData';
+
+// The dark photo carries its own navy backdrop; the light theme uses a cut-out of the same shot.
+const PORTRAIT = { dark: '/images/portfolio-photo.webp', light: '/images/portrait-light.webp' };
 
 export default function Hero() {
   const root = useRef(null);
   const time = useClock(site.timeZone);
+  const theme = useTheme();
 
   useLayoutEffect(() => {
     if (!document.documentElement.classList.contains('motion-ok')) return undefined;
@@ -57,7 +62,7 @@ export default function Hero() {
           <div className="hero__figure">
             <img
               className="hero__portrait"
-              src="/images/portfolio-photo.webp"
+              src={PORTRAIT[theme]}
               width="1122"
               height="1402"
               alt="Portrait of Sahil Sharma"

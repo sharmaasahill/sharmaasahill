@@ -25,9 +25,12 @@
       property="og:description"
       content="Python, AWS and LLM workflows at TCS, Bengaluru. Five builds with tests, evals and live demos: FlowMancer, SkillLens, Smart Attendance, MeetSync and Pulse."
     />
+    <meta property="og:site_name" content="Sahil Sharma" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:image" content="https://sharmaasahill.vercel.app/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sahil Sharma, Software Engineer (AI, Backend and Cloud)" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Sahil Sharma · Software Engineer (AI, Backend and Cloud)" />
     <meta
@@ -35,6 +38,7 @@
       content="Python, AWS and LLM workflows at TCS, Bengaluru. Five builds with tests, evals and live demos: FlowMancer, SkillLens, Smart Attendance, MeetSync and Pulse."
     />
     <meta name="twitter:image" content="https://sharmaasahill.vercel.app/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Sahil Sharma, Software Engineer (AI, Backend and Cloud)" />
 
     <script type="application/ld+json">
       {
@@ -49,6 +53,7 @@
         "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
         "knowsAbout": ["Python", "Amazon Bedrock", "AWS Lambda", "Amazon Connect", "FastAPI", "Retrieval-augmented generation", "Multi-agent workflows", "LLM evaluation"],
         "url": "https://sharmaasahill.vercel.app/",
+        "image": "https://sharmaasahill.vercel.app/images/portfolio-photo.webp",
         "sameAs": ["https://github.com/sharmaasahill", "https://www.linkedin.com/in/sharmaasahill/"]
       }
     </script>
@@ -61,13 +66,31 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
     />
 
-    <link rel="preload" as="image" href="/images/portfolio-photo.webp" type="image/webp" fetchpriority="high" />
-
-    <!-- Turn on entrance animations before first paint, unless the visitor prefers reduced motion. -->
+    <!--
+      Before first paint: apply a saved light theme (dark is the default), preload the
+      matching portrait, and turn on entrance animations unless motion is reduced.
+    -->
     <script>
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.classList.add('motion-ok');
-      }
+      (function () {
+        var root = document.documentElement;
+        var light = false;
+        try {
+          light = localStorage.getItem('theme') === 'light';
+        } catch (e) {}
+        if (light) {
+          root.dataset.theme = 'light';
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F4F6F8');
+          document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light');
+        }
+        var preload = document.createElement('link');
+        preload.rel = 'preload';
+        preload.as = 'image';
+        preload.type = 'image/webp';
+        preload.href = light ? '/images/portrait-light.webp' : '/images/portfolio-photo.webp';
+        preload.setAttribute('fetchpriority', 'high');
+        document.head.appendChild(preload);
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('motion-ok');
+      })();
     </script>
   </head>
 

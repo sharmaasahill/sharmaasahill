@@ -13,6 +13,7 @@ import {
 import { cta, links, nav, site } from '../data/portfolioData';
 import useActiveSection from '../hooks/useActiveSection';
 import CommandPalette from './CommandPalette';
+import ThemeToggle from './ThemeToggle';
 
 const ICONS = {
   terminal: FiTerminal,
@@ -161,7 +162,11 @@ export default function Navbar() {
           <span className="sr-only">{cta.palette} a section, build or link</span>
           <kbd aria-hidden="true">{SHORTCUT}</kbd>
         </button>
+        <ThemeToggle className="theme-toggle--nav" />
       </nav>
+
+      {/* Below 1100px the pill is replaced by the menu, so the toggle floats beside it. */}
+      <ThemeToggle className="theme-toggle--float" />
 
       <button
         ref={toggleRef}

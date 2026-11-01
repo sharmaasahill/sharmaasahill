@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Page not found · Sahil Sharma</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0E131C" />
+
+    <!-- Same theme choice as the main site, applied before first paint. -->
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch (e) {}
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Manrope:wght@400;600&display=swap"
+    />
+    <style>
+      :root {
+        --bg: #0e131c;
+        --raise: #121925;
+        --line: rgba(173, 186, 205, 0.12);
+        --line-strong: rgba(173, 186, 205, 0.22);
+        --text: #e8eaed;
+        --copy: #a6adb8;
+        --quiet: #858e9c;
+        --dim: #7c8594;
+        --signal: #3ddc97;
+        --btn: #3ddc97;
+        --btn-ink: #06140d;
+        color-scheme: dark;
+      }
+      [data-theme='light'] {
+        --bg: #f4f6f8;
+        --raise: #ffffff;
+        --line: rgba(18, 30, 50, 0.1);
+        --line-strong: rgba(18, 30, 50, 0.18);
+        --text: #101826;
+        --copy: #3e4858;
+        --quiet: #5a6576;
+        --dim: #6b7586;
+        --signal: #097a4d;
+        --btn: #097a4d;
+        --btn-ink: #ffffff;
+        color-scheme: light;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; background: var(--bg); }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 20px;
+        font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: var(--copy);
+        -webkit-font-smoothing: antialiased;
+      }
+      main { width: min(640px, 100%); }
+      .eyebrow { margin: 0 0 26px; font: 500 11px/1.4 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.24em; text-transform: uppercase; color: var(--quiet); }
+      .eyebrow b { font-weight: 500; color: var(--signal); }
+      h1 { margin: 0; font: 400 clamp(2.8rem, 9vw, 4.6rem)/0.98 'Instrument Serif', Georgia, serif; letter-spacing: -0.015em; color: var(--text); }
+      h1 span { display: block; color: var(--dim); }
+      p.body { margin: 24px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.75; }
+      .request {
+        margin: 28px 0 0;
+        padding: 14px 16px;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: var(--raise);
+        font: 400 12.5px/1.6 'IBM Plex Mono', ui-monospace, monospace;
+        color: var(--quiet);
+        overflow-wrap: anywhere;
+      }
+      .request b { font-weight: 500; color: var(--signal); }
+      .request code { color: var(--text); font: inherit; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+      a.btn {
+        display: inline-flex; align-items: center; gap: 22px;
+        height: 46px; padding: 0 18px;
+        border-radius: 3px;
+        font: 600 14px/1 'Manrope', system-ui, sans-serif;
+        text-decoration: none;
+      }
+      a.primary { background: var(--btn); color: var(--btn-ink); }
+      a.ghost { border: 1px solid var(--line-strong); color: var(--text); }
+      a.btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow"><b>404</b> / Route not found</p>
+      <h1>This path isn’t<span>in the trace.</span></h1>
+      <p class="body">The page you asked for doesn’t exist, or the link that sent you here is out of date. Everything on this site lives on one page.</p>
+      <p class="request" aria-label="The request that failed"><b>GET</b> <code id="path">/</code> → 404</p>
+      <div class="actions">
+        <a class="btn primary" href="/">Back to the prompt →</a>
+        <a class="btn ghost" href="/#projects">Inspect the builds</a>
+      </div>
+    </main>
+    <script>
+      document.getElementById('path').textContent = location.pathname + location.search;
+    </script>
+  </body>
+</html>

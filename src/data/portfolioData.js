@@ -495,7 +495,6 @@ export const archive = [
 
 /* ── 04 Toolchain (skills and credentials) ────────────────────── */
 export const certifications = [
-  { year: '2026', title: 'AWS Certified AI Practitioner', issuer: 'Amazon Web Services · AIF-C01' },
   { year: '2026', title: 'AWS Certified Cloud Practitioner', issuer: 'Amazon Web Services · CLF-C02' },
   { year: '2024', title: 'Cloud Foundations, Architecting & Security', issuer: 'AWS Academy' },
 ];
@@ -548,7 +547,7 @@ export const contact = {
     email: { label: 'reply_to', placeholder: 'you@company.com' },
     message: { label: 'payload', placeholder: 'What should we build, fix or automate?' },
   },
-  idle: 'Delivered by a serverless function, read by a person.',
+  idle: 'No bots on this end. I read every message.',
   submit: 'Send for approval',
   success: "Delivered. I'll read it and reply myself.",
   alt: 'Rather skip the form?',
@@ -559,7 +558,6 @@ export const contact = {
 
 export const footer = {
   tagline: 'Make it work, then make it boring.',
-  colophon: 'Hand-built with React and GSAP. The form above is one serverless function on Vercel.',
   github: 'More code on GitHub',
   top: 'Back to the prompt',
 };

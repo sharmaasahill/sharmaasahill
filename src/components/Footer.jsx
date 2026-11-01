@@ -18,8 +18,6 @@ export default function Footer() {
           </a>
         </div>
 
-        <p className="footer__colophon">{footer.colophon}</p>
-
         <div className="footer__bottom">
           <span>
             © {new Date().getFullYear()} {site.fullName}
