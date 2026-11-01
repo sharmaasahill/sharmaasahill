@@ -1,154 +1,221 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-scroll';
-import { motion, AnimatePresence } from 'framer-motion';
-import { HiMenuAlt3, HiX } from 'react-icons/hi';
-import { gsap } from '../lib/gsap';
-import { navLinks } from '../data/portfolioData';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  FiArrowDown,
+  FiArrowUpRight,
+  FiAward,
+  FiBriefcase,
+  FiCommand,
+  FiGitBranch,
+  FiMail,
+  FiTerminal,
+  FiUser,
+} from 'react-icons/fi';
+import { cta, links, nav, site } from '../data/portfolioData';
+import useActiveSection from '../hooks/useActiveSection';
+import CommandPalette from './CommandPalette';
+
+const ICONS = {
+  terminal: FiTerminal,
+  user: FiUser,
+  briefcase: FiBriefcase,
+  branch: FiGitBranch,
+  award: FiAward,
+  mail: FiMail,
+};
+const SECTION_IDS = nav.map((item) => item.id);
+// Everything behind the mobile menu that should be unreachable while it is open.
+const BACKGROUND = ['topbar', 'main', 'site-footer'];
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent);
+const SHORTCUT = IS_MAC ? '⌘K' : 'Ctrl K';
 
 export default function Navbar() {
-  const [active, setActive] = useState('hero');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState(null);
+  const active = useActiveSection(SECTION_IDS);
+  const [open, setOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const navRef = useRef(null);
+  const indicatorRef = useRef(null);
+  const toggleRef = useRef(null);
+  const firstLinkRef = useRef(null);
+  const closedByLink = useRef(false);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.nav-bar', 
-        { y: -50, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.3 }
-      );
-    });
+  // Slide the highlight under whichever section is current.
+  useLayoutEffect(() => {
+    const navEl = navRef.current;
+    const indicator = indicatorRef.current;
+    if (!navEl || !indicator) return undefined;
 
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', fn, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', fn);
-      ctx.revert();
+    const place = () => {
+      const link = navEl.querySelector(`[data-id="${active}"]`);
+      if (!link) return;
+      indicator.style.width = `${link.offsetWidth}px`;
+      indicator.style.transform = `translateX(${link.offsetLeft}px)`;
     };
+    place();
+    document.fonts?.ready.then(place);
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [active]);
+
+  // Ctrl/⌘ K opens the palette from anywhere, and toggles it closed again.
+  useEffect(() => {
+    const onKey = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setPaletteOpen((value) => !value);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Mobile menu: lock scroll, make the page behind it inert, handle Escape and focus.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [menuOpen]);
+    if (!open) return undefined;
+    const root = document.documentElement;
+    const behind = BACKGROUND.map((id) => document.getElementById(id)).filter(Boolean);
+    const toggle = toggleRef.current;
+
+    root.style.overflow = 'hidden';
+    behind.forEach((el) => el.setAttribute('inert', ''));
+    firstLinkRef.current?.focus();
+
+    const onKey = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+
+    // The toggle only exists below 1100px; widening the window must not strand the menu open.
+    const desktop = window.matchMedia('(min-width: 1100px)');
+    const onWiden = (event) => {
+      if (event.matches) setOpen(false);
+    };
+    desktop.addEventListener('change', onWiden);
+
+    return () => {
+      root.style.overflow = '';
+      behind.forEach((el) => el.removeAttribute('inert'));
+      window.removeEventListener('keydown', onKey);
+      desktop.removeEventListener('change', onWiden);
+      // After jumping to a section, let focus follow the link instead of the button.
+      if (!closedByLink.current) toggle?.focus();
+      closedByLink.current = false;
+    };
+  }, [open]);
+
+  const closeFromLink = () => {
+    closedByLink.current = true;
+    setOpen(false);
+  };
 
   return (
     <>
-      <header
-        className="nav-bar"
-        style={{
-          position: 'fixed', top: 0, left: 0, right: 0,
-          zIndex: 999,
-          background: scrolled ? 'rgba(0,0,0,0.92)' : 'rgba(0,0,0,0.82)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
-          transition: 'background 0.3s ease, border-color 0.3s ease',
-        }}
-      >
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="hero" smooth duration={600} className="cursor-pointer shrink-0 group">
-            <span
-              className="font-heading font-bold text-sm tracking-wide select-none transition-colors duration-300"
-              style={{ color: '#fff' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
-              onMouseLeave={e => e.currentTarget.style.color = '#fff'}
-            >
-              sharmaasahill
-            </span>
-          </Link>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive = active === link.to;
-              const isHovered = hovered === link.to;
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  smooth
-                  offset={0}
-                  duration={500}
-                  spy
-                  onSetActive={() => setActive(link.to)}
-                  onMouseEnter={() => setHovered(link.to)}
-                  onMouseLeave={() => setHovered(null)}
-                  className="relative px-4 py-2 rounded-lg text-sm font-medium cursor-pointer select-none"
-                  style={{
-                    color: isActive || isHovered ? 'var(--accent)' : 'var(--text2)',
-                    transition: 'color 0.25s ease',
-                  }}
-                >
-                  {/* Active section pill */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-pill"
-                      className="absolute inset-0 rounded-lg"
-                      style={{ background: 'rgba(0, 234, 255, 0.08)', border: '1px solid rgba(0,234,255,0.15)' }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 36 }}
-                    />
-                  )}
-
-                  {/* Hover glow underline */}
-                  <motion.span
-                    className="absolute bottom-0.5 left-3 right-3 h-px rounded-full"
-                    style={{ background: 'var(--accent)', originX: 0.5 }}
-                    initial={false}
-                    animate={{ scaleX: isHovered && !isActive ? 1 : 0, opacity: isHovered && !isActive ? 1 : 0 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                  />
-
-                  <span className="relative z-10">{link.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link to="contact-form" smooth offset={-90} duration={600}
-              className="hidden md:inline-flex btn-primary text-xs py-2 px-4 cursor-pointer">
-              Hire Me
-            </Link>
-            <button onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-white"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-              aria-label="Toggle menu">
-              {menuOpen ? <HiX size={18} /> : <HiMenuAlt3 size={18} />}
-            </button>
-          </div>
+      <div id="topbar" className="topbar">
+        <a href="#intro" className="wordmark" aria-label={`${site.handle}, back to the top`}>
+          {site.handle}
+          <span aria-hidden="true">_</span>
+        </a>
+        <div className="topbar__actions">
+          <a className="topbar__link topbar__link--resume" href={site.resume.href} download={site.resume.fileName}>
+            {site.resume.label} <FiArrowDown aria-hidden="true" />
+          </a>
+          <a className="topbar__link topbar__link--hire" href="#contact-form">
+            <span className="status-dot" aria-hidden="true" />
+            {cta.request} <FiArrowUpRight aria-hidden="true" />
+          </a>
         </div>
-      </header>
+      </div>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div key="mob" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position:'fixed', inset:0, zIndex:998, background:'rgba(0,0,0,0.96)', backdropFilter:'blur(20px)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <nav className="flex flex-col items-center gap-2 w-full max-w-xs">
-              {navLinks.map((l, i) => (
-                <motion.div key={l.to} className="w-full" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.05 }}>
-                  <Link to={l.to} smooth offset={0} duration={500} onClick={() => setMenuOpen(false)}
-                    className="block w-full text-center py-4 font-heading text-2xl font-semibold cursor-pointer"
-                    style={{ color: active === l.to ? 'var(--accent)' : 'var(--text2)', transition:'color 0.25s ease, text-shadow 0.25s ease' }}
-                    onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.textShadow='0 0 20px rgba(0,234,255,0.4)';}}
-                    onMouseLeave={e=>{e.currentTarget.style.color= active === l.to ? 'var(--accent)' : 'var(--text2)'; e.currentTarget.style.textShadow='none';}}>
-                    {l.name}
-                  </Link>
-                </motion.div>
-              ))}
-              <motion.div className="mt-8 w-64"
-                initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: navLinks.length*0.05+0.05 }}>
-                <Link to="contact-form" smooth offset={-90} duration={600} onClick={() => setMenuOpen(false)}
-                  className="btn-primary w-full justify-center cursor-pointer">
-                  Hire Me
-                </Link>
-              </motion.div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <nav id="section-nav" ref={navRef} className="nav" aria-label="Sections">
+        <span ref={indicatorRef} className="nav__indicator" aria-hidden="true" />
+        {nav.map((item) => {
+          const Icon = ICONS[item.icon];
+          return (
+            <Fragment key={item.id}>
+              {item.separated && <span className="nav__sep" aria-hidden="true" />}
+              <a
+                href={`#${item.id}`}
+                data-id={item.id}
+                className="nav__link"
+                title={item.hint}
+                aria-current={active === item.id ? 'true' : undefined}
+              >
+                <Icon aria-hidden="true" />
+                <span>{item.label}</span>
+              </a>
+            </Fragment>
+          );
+        })}
+        <button
+          type="button"
+          className="nav__palette"
+          onClick={() => setPaletteOpen(true)}
+          aria-haspopup="dialog"
+          aria-keyshortcuts={IS_MAC ? 'Meta+K' : 'Control+K'}
+          title={`${cta.palette} a section, build or link`}
+        >
+          <FiCommand aria-hidden="true" />
+          <span className="sr-only">{cta.palette} a section, build or link</span>
+          <kbd aria-hidden="true">{SHORTCUT}</kbd>
+        </button>
+      </nav>
+
+      <button
+        ref={toggleRef}
+        type="button"
+        className="menu-toggle"
+        aria-expanded={open}
+        aria-controls="site-menu"
+        onClick={() => setOpen((value) => !value)}
+      >
+        {open ? 'Close' : 'Index'}
+        <span className="menu-toggle__icon" aria-hidden="true" />
+      </button>
+
+      <div id="site-menu" className={`menu${open ? ' is-open' : ''}`} inert={!open}>
+        <nav aria-label="Sections">
+          <ul className="menu__list">
+            {nav.map((item, i) => (
+              <li key={item.id}>
+                <a
+                  ref={i === 0 ? firstLinkRef : undefined}
+                  href={`#${item.id}`}
+                  className="menu__link"
+                  style={{ transitionDelay: open ? `${90 + i * 45}ms` : '0ms' }}
+                  aria-current={active === item.id ? 'true' : undefined}
+                  onClick={closeFromLink}
+                >
+                  <small>{String(i).padStart(2, '0')}</small>
+                  <span className="menu__label">
+                    {item.label}
+                    <em>{item.hint}</em>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <a href="#contact-form" className="btn btn--primary menu__cta" onClick={closeFromLink}>
+          {cta.request} <FiArrowUpRight aria-hidden="true" />
+        </a>
+        <div className="menu__foot">
+          <a href={site.resume.href} download={site.resume.fileName}>
+            {site.resume.label} ↓
+          </a>
+          <a href={links.github} target="_blank" rel="noreferrer">
+            GitHub <FiArrowUpRight aria-hidden="true" style={{ display: 'inline', width: 12 }} />
+          </a>
+          <a href={links.linkedin} target="_blank" rel="noreferrer">
+            LinkedIn <FiArrowUpRight aria-hidden="true" style={{ display: 'inline', width: 12 }} />
+          </a>
+          <a href={`mailto:${links.email}`}>{links.email}</a>
+        </div>
+      </div>
+
+      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} />}
     </>
   );
 }

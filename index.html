@@ -1,50 +1,78 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/sharmaasahill_logo1.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sahil Sharma · Software Engineer (AI, Backend and Cloud)</title>
+    <meta
+      name="description"
+      content="Sahil Kumar Sharma is a software engineer at TCS in Bengaluru working across AI, backend and cloud: Amazon Bedrock rule pipelines, Amazon Connect voice flows, and agentic tools with validation, evaluation and human approval."
+    />
+    <meta name="author" content="Sahil Kumar Sharma" />
+    <link rel="canonical" href="https://sharmaasahill.vercel.app/" />
+    <meta name="theme-color" content="#0E131C" />
+    <meta name="color-scheme" content="dark" />
 
-  <!-- SEO Meta Tags -->
-  <title>sharmaasahill</title>
-  <meta name="description"
-    content="Sahil Sharma — Software Developer specializing in full-stack web development with React, Node.js, and modern technologies. View my projects, skills, and experience." />
-  <meta name="keywords"
-    content="Sahil Sharma, Software Developer, Full Stack Developer, React, Node.js, Portfolio, Web Developer" />
-  <meta name="author" content="Sahil Sharma" />
+    <!-- Open Graph / social previews -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sharmaasahill.vercel.app/" />
+    <meta property="og:title" content="Sahil Sharma · Software Engineer (AI, Backend and Cloud)" />
+    <meta
+      property="og:description"
+      content="Python, AWS and LLM workflows at TCS, Bengaluru. Five builds with tests, evals and live demos: FlowMancer, SkillLens, Smart Attendance, MeetSync and Pulse."
+    />
+    <meta property="og:image" content="https://sharmaasahill.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sahil Sharma · Software Engineer (AI, Backend and Cloud)" />
+    <meta
+      name="twitter:description"
+      content="Python, AWS and LLM workflows at TCS, Bengaluru. Five builds with tests, evals and live demos: FlowMancer, SkillLens, Smart Attendance, MeetSync and Pulse."
+    />
+    <meta name="twitter:image" content="https://sharmaasahill.vercel.app/og-image.jpg" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Sahil Sharma | Software Developer Portfolio" />
-  <meta property="og:description"
-    content="Software Developer specializing in full-stack web development. View my projects, skills, and experience." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sahilsharma.dev" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Sahil Kumar Sharma",
+        "alternateName": "sharmaasahill",
+        "jobTitle": "Cloud Application Engineer",
+        "description": "Software Engineer (AI, Backend and Cloud)",
+        "worksFor": { "@type": "Organization", "name": "Tata Consultancy Services" },
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "ITER, Siksha 'O' Anusandhan University" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
+        "knowsAbout": ["Python", "Amazon Bedrock", "AWS Lambda", "Amazon Connect", "FastAPI", "Retrieval-augmented generation", "Multi-agent workflows", "LLM evaluation"],
+        "url": "https://sharmaasahill.vercel.app/",
+        "sameAs": ["https://github.com/sharmaasahill", "https://www.linkedin.com/in/sharmaasahill/"]
+      }
+    </script>
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Sahil Sharma | Software Developer Portfolio" />
-  <meta name="twitter:description" content="Software Developer specializing in full-stack web development." />
+    <!-- Type: Instrument Serif (display), Manrope (text), IBM Plex Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+    />
 
-  <!-- Google Fonts: Space Grotesk + Inter + JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <!-- Dark theme meta -->
-  <meta name="theme-color" content="#020617" />
-</head>
+    <link rel="preload" as="image" href="/images/portfolio-photo.webp" type="image/webp" fetchpriority="high" />
 
-<body>
-  <!-- Kill browser scroll restoration BEFORE React loads -->
-  <script>
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    window.scrollTo(0, 0);
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-  </script>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
+    <!-- Turn on entrance animations before first paint, unless the visitor prefers reduced motion. -->
+    <script>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion-ok');
+      }
+    </script>
+  </head>
 
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

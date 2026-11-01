@@ -1,87 +1,63 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import { gsap, ScrollTrigger } from './lib/gsap';
 
-import Loader       from './components/Loader';
-import CustomCursor from './components/CustomCursor';
-import Background   from './components/Background';
-import Navbar       from './components/Navbar';
-import Hero         from './components/Hero';
-import About        from './components/About';
-import Skills       from './components/Skills';
-import Projects     from './components/Projects';
-import Experience   from './components/Experience';
-import Services     from './components/Services';
-import Contact      from './components/Contact';
-import Footer       from './components/Footer';
-
-if (typeof window !== 'undefined') history.scrollRestoration = 'manual';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import About from './components/About';
+import Experience from './components/Experience';
+import Projects from './components/Projects';
+import Credentials from './components/Credentials';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
-
-  const handleLoaded = () => {
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    requestAnimationFrame(() => { window.scrollTo(0, 0); setLoaded(true); });
-  };
-
+  // Scroll reveals. Start states live in CSS under .motion-ok (set in index.html),
+  // so nothing is hidden for visitors who prefer reduced motion.
   useEffect(() => {
-    if (!loaded) return;
-    
-    // Fade in the app contents
-    gsap.to('.app-main-wrapper', { opacity: 1, duration: 0.6, ease: 'power2.out' });
+    if (!document.documentElement.classList.contains('motion-ok')) return undefined;
 
-    let lenis;
-    import('lenis').then(({ default: Lenis }) => {
-      lenis = new Lenis({
-        duration: 1.1,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothTouch: false,
+    const ctx = gsap.context(() => {
+      ScrollTrigger.batch('[data-reveal]', {
+        start: 'top 92%',
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out', stagger: 0.07, overwrite: true }),
       });
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    }).catch(() => {});
+
+      gsap.utils.toArray('[data-lines]').forEach((heading) => {
+        gsap.to(heading.querySelectorAll('.line > span'), {
+          y: 0,
+          duration: 1.15,
+          ease: 'power4.out',
+          stagger: 0.1,
+          scrollTrigger: { trigger: heading, start: 'top 90%', once: true },
+        });
+      });
+    });
+
+    // Fonts and images change layout after first paint; re-measure trigger points.
+    const refresh = () => ScrollTrigger.refresh();
+    document.fonts?.ready.then(refresh);
+    window.addEventListener('load', refresh);
 
     return () => {
-      lenis?.destroy();
-      ScrollTrigger.getAll().forEach((st) => st.kill());
+      window.removeEventListener('load', refresh);
+      ctx.revert();
     };
-  }, [loaded]);
+  }, []);
 
   return (
     <>
-      <CustomCursor />
-
-      <AnimatePresence mode="wait">
-        {!loaded && <Loader key="loader" onComplete={handleLoaded} />}
-      </AnimatePresence>
-
-      {loaded && (
-        <div className="app-main-wrapper" style={{ position: 'relative', minHeight: '100vh', opacity: 0 }}>
-          {/* Fixed background layers (dots + orbs) — lowest z-index */}
-          <Background />
-
-          {/* Navbar — always on top */}
-          <Navbar />
-
-          {/* Page content — above all background effects */}
-          <main style={{ position: 'relative', zIndex: 1 }}>
-            <Hero />
-            <About />
-            <Skills />
-            <Projects />
-            <Experience />
-            <Services />
-            <Contact />
-          </main>
-
-          <Footer style={{ position: 'relative', zIndex: 1 }} />
-        </div>
-      )}
+      <Navbar />
+      <main id="main">
+        <Hero />
+        <About />
+        <Experience />
+        <Projects />
+        <Credentials />
+        <Contact />
+      </main>
+      <Footer />
     </>
   );
 }

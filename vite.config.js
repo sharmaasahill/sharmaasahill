@@ -75,10 +75,5 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), devApiRoutes(env)],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
-    },
   };
 });

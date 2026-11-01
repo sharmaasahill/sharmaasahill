@@ -1,144 +1,202 @@
-import { useRef, useCallback, useState, useEffect } from 'react';
-import { FiGithub, FiExternalLink } from 'react-icons/fi';
-import { gsap } from '../lib/gsap';
-import { projects } from '../data/portfolioData';
+import { useRef, useState } from 'react';
+import { FiArrowUpRight, FiClock } from 'react-icons/fi';
+import SectionHeading from './SectionHeading';
+import FlowScene from './scenes/FlowScene';
+import LensScene from './scenes/LensScene';
+import FaceScene from './scenes/FaceScene';
+import CalendarScene from './scenes/CalendarScene';
+import BoardScene from './scenes/BoardScene';
+import useInView from '../hooks/useInView';
 import useMediaQuery from '../hooks/useMediaQuery';
+import useStepper from '../hooks/useStepper';
+import { pad2 } from '../lib/text';
+import { archive, builds, links } from '../data/portfolioData';
 
-function ProjectCard({ project, index }) {
-  const cardRef = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [glow, setGlow] = useState({ x: 50, y: 50 });
-  const isMobile = useMediaQuery('(max-width: 768px)');
+const SCENES = {
+  flowmancer: FlowScene,
+  skilllens: LensScene,
+  attendance: FaceScene,
+  meetsync: CalendarScene,
+  pulse: BoardScene,
+};
+const INTERVAL = 3800; // ms per step while a build is on screen
 
-  const onMove = useCallback((e) => {
-    if (isMobile) return;
-    const r = cardRef.current?.getBoundingClientRect();
-    if (!r) return;
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top)  / r.height;
-    setTilt({ x: (y - 0.5) * -12, y: (x - 0.5) * 12 });
-    setGlow({ x: x * 100, y: y * 100 });
-  }, [isMobile]);
+function BuildCase({ build, index }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, '-18% 0px');
+  const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const compact = useMediaQuery('(max-width: 640px)');
+  const [reading, setReading] = useState(false); // pointer over the step list
+  const running = inView && !reduced && !reading;
+  const { step, held, select, release } = useStepper(build.steps.length, { interval: INTERVAL, running });
 
-  const onEnter = useCallback(() => {
-    if (isMobile) return;
-    gsap.to(cardRef.current, {
-      y: -6,
-      boxShadow: '0 20px 55px rgba(0,0,0,0.55), 0 0 28px rgba(0,234,255,0.07)',
-      duration: 0.35,
-      ease: 'power2.out',
-    });
-  }, [isMobile]);
+  const Scene = SCENES[build.slug];
+  const current = build.steps[step];
+  const titleId = `build-${build.slug}`;
 
-  const onLeave = useCallback(() => {
-    setTilt({ x: 0, y: 0 });
-    gsap.to(cardRef.current, {
-      y: 0,
-      boxShadow: '0 0px 0px rgba(0,0,0,0)',
-      duration: 0.45,
-      ease: 'power2.out',
-    });
-  }, []);
+  // Leaving the case with pointer or focus hands control back to the autoplay.
+  const onBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) release();
+  };
 
   return (
-    <div
-      ref={cardRef}
-      className="project-card-item relative flex flex-col rounded-2xl overflow-hidden group cursor-pointer"
-      onClick={(e) => {
-        if (e.target.closest('a')) return;
-        if (project.githubUrl && project.githubUrl !== '#') {
-          window.open(project.githubUrl, '_blank');
-        }
-      }}
-      onMouseMove={onMove}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,234,255,0.2)'; onEnter(); }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; onLeave(); }}
-      style={{
-        background: 'var(--glass-bg)',
-        border: '1px solid var(--glass-border)',
-        transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: 'border-color 0.3s ease',
-        willChange: 'transform',
-      }}
+    <article
+      ref={ref}
+      className={`build${index % 2 ? ' build--flip' : ''}${inView ? ' is-visible' : ''}`}
+      aria-labelledby={titleId}
+      onPointerLeave={release}
+      onBlur={onBlur}
     >
-      {/* Mouse-tracked cyan glow */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-        style={{ background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(0,234,255,0.07) 0%, transparent 55%)` }} />
-
-      <div className="relative flex flex-col flex-1 p-7"
-        style={{ backdropFilter: 'blur(14px)' }}>
-        <span className="mono text-xs block mb-5" style={{ color: 'var(--text4)' }}>
-          {String(index + 1).padStart(2, '00')}
-        </span>
-        <h3 className="font-heading font-semibold text-base leading-snug mb-3 text-white transition-colors duration-200">
-          {project.title}
-        </h3>
-        <p className="text-sm leading-relaxed flex-1 mb-6" style={{ color: 'var(--text3)' }}>
-          {project.description}
-        </p>
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {project.tech.map((t) => <span key={t} className="tag">{t}</span>)}
-        </div>
-        <div className="flex items-center gap-4 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
-          {project.githubUrl && project.githubUrl !== '#' && (
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs transition-colors duration-200"
-              style={{ color: 'var(--text3)' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
-              <FiGithub size={12} /> Code
-            </a>
-          )}
-          {project.liveUrl && project.liveUrl !== '#' && (
-            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs ml-auto transition-colors duration-200"
-              style={{ color: 'var(--text3)' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
-              <FiExternalLink size={12} /> Live
-            </a>
-          )}
+      <div className="build__stage" data-reveal>
+        <div className="build__screen">
+          <div className="build__chrome" aria-hidden="true">
+            <span className="build__window">{build.window}</span>
+            <span className="build__state">
+              <i />
+              sample run · {pad2(step + 1)}/{pad2(build.steps.length)} · {current.title.toLowerCase()}
+            </span>
+          </div>
+          <div className="build__canvas">
+            <svg className="scene" viewBox="0 0 640 400" aria-hidden="true" focusable="false">
+              <Scene step={step} compact={compact} />
+            </svg>
+          </div>
+          <p className="build__log" aria-hidden="true">
+            <span key={step}>{current.log}</span>
+          </p>
         </div>
       </div>
-    </div>
+
+      <div className="build__info">
+        <p className="build__kicker" data-reveal>
+          <b>{build.code}</b> · {build.kind}
+        </p>
+        <h3 id={titleId} className="build__name" data-reveal>
+          {build.name}
+        </h3>
+        <p className="build__hook" data-reveal>
+          {build.hook}
+        </p>
+        <p className="build__summary" data-reveal>
+          {build.summary}
+        </p>
+
+        <ol
+          className="build__steps"
+          aria-label={`How ${build.name} works, step by step`}
+          onPointerEnter={() => setReading(true)}
+          onPointerLeave={() => setReading(false)}
+          data-reveal
+        >
+          {build.steps.map((s, i) => (
+            <li key={s.title} className={`step${i === step ? ' is-active' : ''}`} onClick={() => select(i)}>
+              <button type="button" className="step__head" aria-current={i === step ? 'step' : undefined}>
+                <span className="step__n">{pad2(i + 1)}</span>
+                {s.title}
+              </button>
+              <p className="step__body">{s.body}</p>
+              {i === step && !held && !reduced && (
+                <span
+                  key={`${step}-${running}`}
+                  className={`step__timer${running ? '' : ' is-paused'}`}
+                  style={{ animationDuration: `${INTERVAL}ms` }}
+                  aria-hidden="true"
+                />
+              )}
+            </li>
+          ))}
+        </ol>
+
+        <dl className="build__proof" data-reveal>
+          {build.proof.map((p) => (
+            <div key={p.label}>
+              <dt>{p.label}</dt>
+              <dd>{p.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="build__note" data-reveal>
+          {build.note}
+        </p>
+
+        <div className="build__stack" aria-label="Built with" data-reveal>
+          {build.stack.map((tech) => (
+            <span key={tech} className="tag">
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        <div className="build__links" data-reveal>
+          {build.live && (
+            <a className="btn btn--primary btn--sm" href={build.live} target="_blank" rel="noreferrer">
+              Open live<span className="sr-only"> demo of {build.name}</span> <FiArrowUpRight aria-hidden="true" />
+            </a>
+          )}
+          <a className="btn btn--ghost btn--sm" href={build.repo} target="_blank" rel="noreferrer">
+            Source<span className="sr-only"> code for {build.name}</span> <FiArrowUpRight aria-hidden="true" />
+          </a>
+          {build.extra && (
+            <a className="text-link" href={build.extra.href} target="_blank" rel="noreferrer">
+              {build.extra.label}
+              <span className="sr-only"> for {build.name}</span> <FiArrowUpRight aria-hidden="true" />
+            </a>
+          )}
+          <span className="build__host">
+            {build.wakes && <FiClock aria-hidden="true" />}
+            {build.hosting}
+            {build.wakes && ' · free tier, first load can take a minute'}
+          </span>
+        </div>
+      </div>
+    </article>
   );
 }
 
 export default function Projects() {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.pr-heading', {
-        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: '.pr-heading', start: 'top 82%' },
-      });
-      gsap.from('.project-card-item', {
-        y: 60, opacity: 0, scale: 0.96, duration: 0.7,
-        stagger: { each: 0.1, from: 'start' },
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.pr-grid', start: 'top 78%', toggleActions: 'play none none none' },
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section id="projects" ref={ref} className="relative">
-      <div className="section-container">
-        <div className="pr-heading flex items-end justify-between gap-8 mb-16 flex-wrap">
-          <div>
-            <span className="section-label">Projects</span>
-            <h2 className="section-title">Things I've <span className="gradient-text">built</span></h2>
-          </div>
-          <a href="https://github.com/sharmaasahill?tab=repositories" target="_blank" rel="noopener noreferrer"
-            className="btn-ghost" style={{ border: '1px solid var(--glass-border)', borderRadius: 10 }}>
-            <FiGithub size={13} /> All repos
-          </a>
+    <section id="projects" className="section" aria-labelledby="projects-title">
+      <div className="rail">
+        <SectionHeading
+          id="projects-title"
+          index="03"
+          label="Builds"
+          title="After hours, same standards"
+          action={
+            <a className="text-link" href={links.githubRepos} target="_blank" rel="noreferrer">
+              Every repository <FiArrowUpRight aria-hidden="true" />
+            </a>
+          }
+        />
+        <p className="builds__intro" data-reveal>
+          Five case files. Each screen replays a sample run of the real pipeline, with the thresholds, routes and
+          numbers taken from the code. Click a step to hold it.
+        </p>
+
+        <div className="builds">
+          {builds.map((build, i) => (
+            <BuildCase key={build.slug} build={build} index={i} />
+          ))}
         </div>
 
-        <div className="pr-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ perspective: '1000px' }}>
-          {projects.map((p, i) => <ProjectCard key={p.title} project={p} index={i} />)}
+        <div className="more">
+          <div className="more__label" data-reveal>
+            <p className="eyebrow">More from the workbench</p>
+          </div>
+          <ul className="more__list">
+            {archive.map((item) => (
+              <li key={item.name} data-reveal>
+                <a className="more__row" href={item.href} target="_blank" rel="noreferrer">
+                  <span className="more__name">{item.name}</span>
+                  <span className="more__desc">{item.description}</span>
+                  <span className="more__stack">{item.stack}</span>
+                  <span className="more__kind">
+                    {item.kind} <FiArrowUpRight aria-hidden="true" />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

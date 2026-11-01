@@ -1,57 +1,44 @@
-import { Link } from 'react-scroll';
-import { FiArrowUp } from 'react-icons/fi';
-import { navLinks, contactInfo } from '../data/portfolioData';
+import { FiArrowUp, FiArrowUpRight } from 'react-icons/fi';
+import { footer, links, site } from '../data/portfolioData';
 
 export default function Footer() {
   return (
-    <footer style={{ position: 'relative', zIndex: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div>
-            <Link to="hero" smooth duration={600} className="cursor-pointer">
-              <span className="font-heading font-bold text-sm text-white">Sahil Sharma</span>
-            </Link>
-            <p className="mono text-xs mt-1" style={{ color: 'var(--text5)' }}>Software Engineer</p>
+    <footer id="site-footer" className="footer">
+      <div className="rail">
+        <div className="footer__top">
+          <div className="footer__brand">
+            <a href="#intro" className="wordmark" aria-label={`${site.handle}, back to the top`}>
+              {site.handle}
+              <span aria-hidden="true">_</span>
+            </a>
+            <p className="footer__tagline">{footer.tagline}</p>
           </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} smooth offset={-72} duration={500}
-                className="mono text-xs cursor-pointer transition-all duration-300 inline-block"
-                style={{ color: 'var(--text5)', transform: 'translateY(0)' }}
-                onMouseEnter={e=>{e.target.style.color='var(--accent)'; e.target.style.transform='translateY(-2px)';}}
-                onMouseLeave={e=>{e.target.style.color='var(--text5)'; e.target.style.transform='translateY(0)';}}>
-                {l.name}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-4">
-            {contactInfo.socials.slice(0,4).map(s=>(
-              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}
-                className="transition-all duration-300 inline-block" style={{ color: 'var(--text5)', transform: 'translateY(0)' }}
-                onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='translateY(-3px)';}} 
-                onMouseLeave={e=>{e.currentTarget.style.color='var(--text5)'; e.currentTarget.style.transform='translateY(0)';}}>
-                <s.icon size={15}/>
-              </a>
-            ))}
-            <Link to="hero" smooth duration={600} className="cursor-pointer ml-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
-                style={{ color:'var(--text5)', border:'1px solid var(--line)' }}
-                onMouseEnter={e=>{e.currentTarget.style.color='var(--accent)';e.currentTarget.style.borderColor='rgba(0,234,255,0.2)';}}
-                onMouseLeave={e=>{e.currentTarget.style.color='var(--text5)';e.currentTarget.style.borderColor='var(--line)';}}>
-                <FiArrowUp size={14}/>
-              </div>
-            </Link>
-          </div>
+          <a className="text-link" href={links.github} target="_blank" rel="noreferrer">
+            {footer.github} <FiArrowUpRight aria-hidden="true" />
+          </a>
         </div>
-        <div className="divider my-8" />
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="mono text-xs" style={{ color: 'var(--text5)' }}>
-            © {new Date().getFullYear()} Sahil Sharma.
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="status-dot" style={{ width:6, height:6 }}/>
-            <span className="mono text-xs" style={{color:'var(--text5)'}}>Open to opportunities</span>
-          </div>
+
+        <p className="footer__colophon">{footer.colophon}</p>
+
+        <div className="footer__bottom">
+          <span>
+            © {new Date().getFullYear()} {site.fullName}
+          </span>
+          <nav className="footer__links" aria-label="Elsewhere">
+            <a href={site.resume.href} download={site.resume.fileName}>
+              {site.resume.label}
+            </a>
+            <a href={links.linkedin} target="_blank" rel="noreferrer">
+              LinkedIn
+            </a>
+            <a href={`mailto:${links.email}`}>Email</a>
+            <a href={links.whatsapp} target="_blank" rel="noreferrer">
+              WhatsApp
+            </a>
+          </nav>
+          <a className="footer__top-link" href="#intro">
+            {footer.top} <FiArrowUp aria-hidden="true" />
+          </a>
         </div>
       </div>
     </footer>

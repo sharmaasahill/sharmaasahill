@@ -1,128 +1,125 @@
-import { useRef, useEffect } from 'react';
-import { Link } from 'react-scroll';
-import { FiArrowRight, FiDownload } from 'react-icons/fi';
+import { useLayoutEffect, useRef } from 'react';
+import { FiArrowDown, FiArrowUpRight, FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
 import { gsap } from '../lib/gsap';
-import MagneticButton from './MagneticButton';
-import useMouseParallax from '../hooks/useMouseParallax';
-import useMediaQuery from '../hooks/useMediaQuery';
-import { heroData, contactInfo } from '../data/portfolioData';
+import SystemDiagram from './SystemDiagram';
+import useClock from '../hooks/useClock';
+import { hero, links, site } from '../data/portfolioData';
 
 export default function Hero() {
-  const ref = useRef(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const parallax = useMouseParallax(isMobile ? 0 : 0.012);
+  const root = useRef(null);
+  const time = useClock(site.timeZone);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!document.documentElement.classList.contains('motion-ok')) return undefined;
+
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.fromTo('.h-badge',   { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.2)
-        .fromTo('.h-eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.4)
-        .fromTo('.h-name',    { y: 60, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 1.0 }, 0.55)
-        .fromTo('.h-role',    { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, 0.9)
-        .fromTo('.h-tagline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 1.05)
-        .fromTo('.h-actions', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.2)
-        .fromTo('.h-socials', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 1.35)
-        .fromTo('.h-scroll',  { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.7);
-    }, ref);
+      gsap
+        .timeline({ defaults: { ease: 'power3.out' } })
+        .from('.hero__frame', { opacity: 0, duration: 1.6, ease: 'power2.out' }, 0)
+        .from('.hero__diagram', { opacity: 0, duration: 2.2, ease: 'power1.out' }, 0.2)
+        .from('.hero__portrait', { opacity: 0, y: 36, duration: 1.5 }, 0.1)
+        .from('.hero__name .line > span', { yPercent: 106, duration: 1.3, ease: 'power4.out', stagger: 0.12 }, 0.35)
+        .from(['.hero__eyebrow', '.hero__intro', '.hero__actions'], { opacity: 0, y: 14, duration: 0.9, stagger: 0.1 }, 0.8)
+        .from(['.hero__caption', '.hero__aside', '.hero__scroll'], { opacity: 0, duration: 1, stagger: 0.06 }, 1.05);
+
+      // A little depth as the hero scrolls away: portrait drifts slower than the type.
+      const away = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true };
+      gsap.to('.hero__portrait', { yPercent: 9, ease: 'none', scrollTrigger: away });
+      gsap.to('.hero__text', { y: -60, ease: 'none', scrollTrigger: { ...away } });
+    }, root);
+
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="hero" ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="section-container w-full">
-        {/* Parallax wrapper — very subtle depth shift */}
-        <div
-          className="max-w-3xl"
-          style={{
-            transform: `translate(${parallax.x * 18}px, ${parallax.y * 12}px)`,
-            transition: 'transform 0.1s linear',
-            willChange: 'transform',
-          }}
-        >
-          {/* Status */}
-          <div className="h-badge flex items-center gap-2.5 mb-10">
-            <span className="status-dot" />
-            <span className="mono text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text3)' }}>
-              Available for work
-            </span>
-          </div>
+    <section id="intro" ref={root} className="hero" aria-labelledby="hero-title">
+      <SystemDiagram className="hero__diagram" />
 
-          <div className="h-eyebrow mono text-xs tracking-[0.2em] uppercase mb-5" style={{ color: 'var(--accent)' }}>
-            {heroData.greeting}
-          </div>
+      <div className="hero__frame" aria-hidden="true">
+        <span className="hero__corner hero__corner--tl" />
+        <span className="hero__corner hero__corner--tr" />
+        <span className="hero__corner hero__corner--bl" />
+        <span className="hero__corner hero__corner--br" />
+      </div>
 
-          {/* Name — with a very soft glow behind for depth */}
-          <div className="relative">
-            {/* Glow behind name */}
-            <div
-              aria-hidden
-              className="absolute -inset-8 -z-10 pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse 70% 50% at 30% 50%, rgba(0,234,255,0.06) 0%, transparent 70%)',
-                filter: 'blur(20px)',
-              }}
+      <p className="hero__caption hero__caption--left eyebrow">
+        <span className="status-dot" aria-hidden="true" />
+        <span className="long">{hero.status}</span>
+        <span className="short">{hero.statusShort}</span>
+      </p>
+      <p className="hero__caption hero__caption--right eyebrow">
+        <span className="long">{site.city} · </span>
+        <time aria-label={`Local time in ${site.city}`}>{time}</time>&nbsp;IST
+      </p>
+
+      <div className="hero__body">
+        <div className="hero__stage">
+          <div className="hero__figure">
+            <img
+              className="hero__portrait"
+              src="/images/portfolio-photo.webp"
+              width="1122"
+              height="1402"
+              alt="Portrait of Sahil Sharma"
+              fetchPriority="high"
+              draggable="false"
             />
-            <h1
-              className="h-name font-heading font-bold text-white"
-              style={{
-                fontSize: 'clamp(2.8rem, 10vw, 7.5rem)',
-                letterSpacing: '-0.04em',
-                lineHeight: 1.0,
-                marginBottom: '1.5rem',
-                willChange: 'transform',
-              }}
-            >
-              {heroData.name}
+          </div>
+
+          <div className="hero__text">
+            <p className="hero__eyebrow eyebrow">{hero.eyebrow}</p>
+            <h1 id="hero-title" className="hero__name">
+              <span className="line">
+                <span>{hero.firstName} </span>
+              </span>
+              <span className="line">
+                <span>
+                  {hero.lastName}
+                  <span className="dot">.</span>
+                </span>
+              </span>
             </h1>
-          </div>
-
-          {/* Role */}
-          <div className="h-role flex items-center gap-3 mb-8" style={{ height: '42px' }}>
-            <div style={{ width: 28, height: 1, background: 'var(--accent)', opacity: 0.45, flexShrink: 0 }} />
-            <div className="font-heading font-medium text-xl md:text-2xl flex items-center" style={{ color: 'var(--text2)' }}>
-              <span className="inline-block whitespace-nowrap">{heroData.title}</span>
-              <span className="inline-block w-0.5 h-6 ml-2 align-middle animate-blink" style={{ background: 'var(--accent)', flexShrink: 0 }} />
+            <p className="hero__intro">
+              {hero.intro[0]} <br className="br-desktop" />
+              {hero.intro[1]}
+            </p>
+            <div className="hero__actions">
+              <a className="btn btn--primary" href="#projects">
+                {hero.primary} <FiArrowUpRight aria-hidden="true" />
+              </a>
+              <a className="btn btn--ghost btn--down btn--file" href={site.resume.href} download={site.resume.fileName}>
+                {site.resume.label} <FiArrowDown aria-hidden="true" />
+              </a>
             </div>
-          </div>
-
-          <p className="h-tagline section-body mb-12 max-w-lg" style={{ color: '#d1d5db' }}>{heroData.tagline}</p>
-
-          <div className="h-actions flex flex-wrap items-center gap-4 mb-14">
-            <MagneticButton>
-              <Link to="projects" smooth offset={0} duration={600} className="btn-primary cursor-pointer">
-                See My Work <FiArrowRight size={14} />
-              </Link>
-            </MagneticButton>
-            <MagneticButton>
-              <a href={heroData.resumeUrl} download="Sahil_Sharma_Software_Engineer_Resume.pdf" className="btn-outline">
-                <FiDownload size={14} /> Resume
-              </a>
-            </MagneticButton>
-          </div>
-
-          <div className="h-socials flex items-center gap-5">
-            {contactInfo.socials.slice(0, 4).map((s) => (
-              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}
-                className="transition-all duration-200 hover:scale-110"
-                style={{ color: 'var(--text3)' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}>
-                <s.icon size={18} />
-              </a>
-            ))}
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="h-scroll absolute bottom-10 left-1/2 -translate-x-1/2">
-        <Link to="about" smooth offset={0} duration={600} className="cursor-pointer flex flex-col items-center gap-2">
-          <span className="mono text-[10px] tracking-[0.25em] uppercase" style={{ color: 'var(--text5)' }}>scroll</span>
-          <div className="w-4 h-7 rounded-full border flex justify-center pt-1.5" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-            <div className="w-0.5 h-2 rounded-full" style={{ background: 'var(--accent)', animation: 'bob 1.8s ease-in-out infinite' }} />
-          </div>
-        </Link>
+      <div className="hero__aside hero__aside--left">
+        <p className="eyebrow">{hero.endpointsLabel}</p>
+        <a href={links.github} target="_blank" rel="noreferrer">
+          <FiGithub aria-hidden="true" /> GitHub <FiArrowUpRight aria-hidden="true" />
+        </a>
+        <a href={links.linkedin} target="_blank" rel="noreferrer">
+          <FiLinkedin aria-hidden="true" /> LinkedIn <FiArrowUpRight aria-hidden="true" />
+        </a>
+        <a href={`mailto:${links.email}`}>
+          <FiMail aria-hidden="true" /> Email <FiArrowUpRight aria-hidden="true" />
+        </a>
       </div>
+
+      <div className="hero__aside hero__aside--right">
+        <p className="eyebrow">
+          <span className="status-dot" aria-hidden="true" /> {hero.runningLabel}
+        </p>
+        {hero.running.map((line) => (
+          <span key={line}>{line}</span>
+        ))}
+      </div>
+
+      <a href="#about" className="hero__scroll eyebrow">
+        {hero.scroll} <FiArrowDown aria-hidden="true" />
+      </a>
     </section>
   );
 }
