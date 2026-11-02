@@ -26,7 +26,6 @@ export const C = {
 
 export const MONO = "'IBM Plex Mono', ui-monospace, monospace";
 export const SANS = "'Manrope', system-ui, sans-serif";
-export const SERIF = "'Instrument Serif', Georgia, serif";
 
 /** Opacity for an element that is on in some steps and faded in others. */
 export const show = (on, off = 0) => ({ opacity: on ? 1 : off });
