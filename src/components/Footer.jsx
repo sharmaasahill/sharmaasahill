@@ -1,7 +1,10 @@
 import { FiArrowUp, FiArrowUpRight } from 'react-icons/fi';
+import useMonth from '../hooks/useMonth';
 import { footer, links, site } from '../data/portfolioData';
 
 export default function Footer() {
+  const year = Math.floor(useMonth() / 12);
+
   return (
     <footer id="site-footer" className="footer">
       <div className="rail">
@@ -20,7 +23,7 @@ export default function Footer() {
 
         <div className="footer__bottom">
           <span>
-            © {new Date().getFullYear()} {site.fullName}
+            © {year} {site.fullName}
           </span>
           <nav className="footer__links" aria-label="Elsewhere">
             <a href={site.resume.href} download={site.resume.fileName}>

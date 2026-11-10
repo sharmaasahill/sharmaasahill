@@ -1,43 +1,18 @@
-import { useLayoutEffect, useRef } from 'react';
 import { FiArrowDown, FiArrowUpRight, FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
-import { gsap } from '../lib/gsap';
 import SystemDiagram from './SystemDiagram';
 import useClock from '../hooks/useClock';
-import useTheme from '../hooks/useTheme';
 import { hero, links, site } from '../data/portfolioData';
 
-// The dark photo carries its own navy backdrop; the light theme uses a cut-out of the same shot.
-const PORTRAIT = { dark: '/images/portfolio-photo.webp', light: '/images/portrait-light.webp' };
-
+/*
+ * The entrance and the scroll drift are CSS ("Hero" and "Motion" in index.css), so they
+ * start with the first paint of the prerendered page instead of waiting for JavaScript.
+ * The portrait is a CSS background so each theme and screen downloads only its own file.
+ */
 export default function Hero() {
-  const root = useRef(null);
   const time = useClock(site.timeZone);
-  const theme = useTheme();
-
-  useLayoutEffect(() => {
-    if (!document.documentElement.classList.contains('motion-ok')) return undefined;
-
-    const ctx = gsap.context(() => {
-      gsap
-        .timeline({ defaults: { ease: 'power3.out' } })
-        .from('.hero__frame', { opacity: 0, duration: 1.6, ease: 'power2.out' }, 0)
-        .from('.hero__diagram', { opacity: 0, duration: 2.2, ease: 'power1.out' }, 0.2)
-        .from('.hero__portrait', { opacity: 0, y: 36, duration: 1.5 }, 0.1)
-        .from('.hero__name .line > span', { yPercent: 106, duration: 1.3, ease: 'power4.out', stagger: 0.12 }, 0.35)
-        .from(['.hero__eyebrow', '.hero__intro', '.hero__actions'], { opacity: 0, y: 14, duration: 0.9, stagger: 0.1 }, 0.8)
-        .from(['.hero__caption', '.hero__aside', '.hero__scroll'], { opacity: 0, duration: 1, stagger: 0.06 }, 1.05);
-
-      // A little depth as the hero scrolls away: portrait drifts slower than the type.
-      const away = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true };
-      gsap.to('.hero__portrait', { yPercent: 9, ease: 'none', scrollTrigger: away });
-      gsap.to('.hero__text', { y: -60, ease: 'none', scrollTrigger: { ...away } });
-    }, root);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
-    <section id="intro" ref={root} className="hero" aria-labelledby="hero-title">
+    <section id="intro" className="hero" aria-labelledby="hero-title">
       <SystemDiagram className="hero__diagram" />
 
       <div className="hero__frame" aria-hidden="true">
@@ -54,21 +29,13 @@ export default function Hero() {
       </p>
       <p className="hero__caption hero__caption--right eyebrow">
         <span className="long">{site.city} · </span>
-        <time aria-label={`Local time in ${site.city}`}>{time}</time>&nbsp;IST
+        <time aria-label={`Local time in ${site.city}`}>{time || '--:--'}</time>&nbsp;IST
       </p>
 
       <div className="hero__body">
         <div className="hero__stage">
           <div className="hero__figure">
-            <img
-              className="hero__portrait"
-              src={PORTRAIT[theme]}
-              width="1122"
-              height="1402"
-              alt="Portrait of Sahil Sharma"
-              fetchPriority="high"
-              draggable="false"
-            />
+            <div className="hero__portrait" role="img" aria-label="Portrait of Sahil Sharma" />
           </div>
 
           <div className="hero__text">

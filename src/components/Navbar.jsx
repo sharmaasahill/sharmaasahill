@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   FiArrowDown,
   FiArrowUpRight,
@@ -26,10 +26,13 @@ const ICONS = {
 const SECTION_IDS = nav.map((item) => item.id);
 // Everything behind the mobile menu that should be unreachable while it is open.
 const BACKGROUND = ['topbar', 'main', 'site-footer'];
-const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent);
-const SHORTCUT = IS_MAC ? '⌘K' : 'Ctrl K';
+// The prerendered page says "Ctrl K"; Apple devices switch to "⌘K" once hydrated.
+const neverChanges = () => () => {};
+const onApple = () => /Mac|iPhone|iPad/i.test(navigator.userAgent);
+const useIsMac = () => useSyncExternalStore(neverChanges, onApple, () => false);
 
 export default function Navbar() {
+  const isMac = useIsMac();
   const active = useActiveSection(SECTION_IDS);
   const [open, setOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -155,12 +158,12 @@ export default function Navbar() {
           className="nav__palette"
           onClick={() => setPaletteOpen(true)}
           aria-haspopup="dialog"
-          aria-keyshortcuts={IS_MAC ? 'Meta+K' : 'Control+K'}
+          aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'}
           title={`${cta.palette} a section, build or link`}
         >
           <FiCommand aria-hidden="true" />
           <span className="sr-only">{cta.palette} a section, build or link</span>
-          <kbd aria-hidden="true">{SHORTCUT}</kbd>
+          <kbd aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>
         </button>
         <ThemeToggle className="theme-toggle--nav" />
       </nav>

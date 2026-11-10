@@ -495,6 +495,7 @@ export const archive = [
 
 /* ── 04 Toolchain (skills and credentials) ────────────────────── */
 export const certifications = [
+  { year: '2026', title: 'AWS Certified AI Practitioner', issuer: 'Amazon Web Services · AIF-C01' },
   { year: '2026', title: 'AWS Certified Cloud Practitioner', issuer: 'Amazon Web Services · CLF-C02' },
   { year: '2024', title: 'Cloud Foundations, Architecting & Security', issuer: 'AWS Academy' },
 ];

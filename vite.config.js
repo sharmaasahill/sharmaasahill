@@ -75,5 +75,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), devApiRoutes(env)],
+    define: {
+      // "YYYY-MM": the month the prerendered page shows until hydration (src/hooks/useMonth.js).
+      __BUILD_MONTH__: JSON.stringify(new Date().toISOString().slice(0, 7)),
+    },
   };
 });

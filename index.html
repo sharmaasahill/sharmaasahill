@@ -52,23 +52,31 @@
         "alumniOf": { "@type": "CollegeOrUniversity", "name": "ITER, Siksha 'O' Anusandhan University" },
         "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
         "knowsAbout": ["Python", "Amazon Bedrock", "AWS Lambda", "Amazon Connect", "FastAPI", "Retrieval-augmented generation", "Multi-agent workflows", "LLM evaluation"],
+        "hasCredential": [
+          { "@type": "EducationalOccupationalCredential", "name": "AWS Certified AI Practitioner (AIF-C01)", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
+          { "@type": "EducationalOccupationalCredential", "name": "AWS Certified Cloud Practitioner (CLF-C02)", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } }
+        ],
         "url": "https://sharmaasahill.vercel.app/",
         "image": "https://sharmaasahill.vercel.app/images/portfolio-photo.webp",
         "sameAs": ["https://github.com/sharmaasahill", "https://www.linkedin.com/in/sharmaasahill/"]
       }
     </script>
 
-    <!-- Type: Instrument Serif (display), Manrope (text), IBM Plex Mono (labels) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
-    />
+    <!--
+      Type: Instrument Serif (display), Manrope (text), IBM Plex Mono (labels), self-hosted
+      from /fonts (see "Fonts" in src/index.css). The faces visible in the first screen are
+      fetched straight away, so they are usually in before the first layout and the page
+      isn't laid out a second time when they swap in.
+    -->
+    <link rel="preload" href="/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ibm-plex-mono-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
 
     <!--
       Before first paint: apply a saved light theme (dark is the default), preload the
-      matching portrait, and turn on entrance animations unless motion is reduced.
+      portrait this theme will use (the same files as .hero__portrait in src/index.css),
+      and turn on the motion unless it is reduced.
     -->
     <script>
       (function () {

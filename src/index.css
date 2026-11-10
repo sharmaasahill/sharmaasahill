@@ -23,16 +23,128 @@ img, svg { display: block; vertical-align: middle; }
 img { max-width: 100%; height: auto; }
 
 /* ══════════════════════════════════════════════════════════════
+   Fonts
+   Self-hosted from public/fonts (the same files Google Fonts serves; all
+   three are SIL Open Font License 1.1, notices are inside the files).
+   Latin is used for nearly everything; latin-ext only downloads if a
+   character needs it, e.g. ₹ in the SkillLens scene. index.html preloads
+   the two hero faces. The files are cached for a year (vercel.json), so
+   give a changed file a new name.
+   ══════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-ext-400-italic.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-ext-500-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-ext-600-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ══════════════════════════════════════════════════════════════
    Tokens
    ══════════════════════════════════════════════════════════════ */
 :root {
   --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  /* Manrope is one variable file (200 to 800), see "Fonts" above. */
   --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --rail: 1192px;
   --gutter: clamp(20px, 4.5vw, 48px);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The GSAP eases the motion was first tuned with: power1 to power4 "out". */
+  --ease-p1: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-p2: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-p3: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-p4: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Dark theme (default). The build screens re-declare it, so they stay dark in the light theme too. */
@@ -306,8 +418,6 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--line-strong);
   color: var(--text);
   background: var(--ghost-bg);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .btn--ghost:hover { border-color: var(--line-hover); background: var(--hover); }
 
@@ -559,6 +669,9 @@ a { color: inherit; text-decoration: none; }
 .theme-toggle:hover { color: var(--text); background: var(--hover); }
 .theme-toggle svg { width: 15px; height: 15px; transition: transform 0.5s var(--ease-out); }
 .theme-toggle:hover svg { transform: rotate(-20deg); }
+.theme-toggle__moon,
+[data-theme='light'] .theme-toggle__sun { display: none; }
+[data-theme='light'] .theme-toggle__moon { display: block; }
 .theme-toggle--nav { position: relative; z-index: 1; margin-left: 2px; }
 .theme-toggle--float {
   position: fixed;
@@ -696,9 +809,9 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
+  overflow: hidden;
   pointer-events: none;
+  container-type: size;
   /* Visible on the flanks, gone behind the portrait and the name. */
   -webkit-mask-image:
     linear-gradient(to right, #000 20%, transparent 37%, transparent 63%, #000 80%),
@@ -760,11 +873,14 @@ a { color: inherit; text-decoration: none; }
   transform: translateX(-48.5%);
   pointer-events: none;
 }
+/*
+ * The portrait is a background so only the current theme's photo downloads. The pre-paint
+ * script in index.html preloads the same file; change both together.
+ */
 .hero__portrait {
   width: 100%;
-  height: auto;
-  -webkit-user-select: none;
-  user-select: none;
+  aspect-ratio: 1122 / 1402;
+  background: url('/images/portfolio-photo.webp') center / 100% 100% no-repeat;
   /* The photo brings its own navy backdrop and glow. Feather its edges into the page,
      and let the shirt fall into shadow under the name so the type stays readable. */
   -webkit-mask-image:
@@ -777,6 +893,8 @@ a { color: inherit; text-decoration: none; }
   mask-composite: intersect;
 }
 
+[data-theme='light'] .hero__portrait { background-image: url('/images/portrait-light.webp'); }
+
 /* Light theme: the cut-out has no backdrop, so a soft mint glow stands in for the photo's own. */
 [data-theme='light'] .hero__figure::before {
   content: '';
@@ -786,18 +904,70 @@ a { color: inherit; text-decoration: none; }
   background: radial-gradient(ellipse 46% 34% at 48.5% 30%, rgba(61, 220, 151, 0.26), rgba(61, 220, 151, 0.08) 55%, transparent 75%);
 }
 
-/* Hero diagram colours (SystemDiagram.jsx) */
+/* Hero diagram (SystemDiagram.jsx). The cover box keeps the 1440×900 drawing's shape and
+   fills the hero like `slice` would: as wide as the hero or 1.6 × its height, whichever is more. */
+.sd__cover {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 160cqh);
+  height: max(100cqh, 62.5cqw);
+  transform: translate(-50%, -50%);
+}
+.sd__drawing { width: 100%; height: 100%; }
 .sd-wire { stroke: var(--sd-line); }
 .sd-tick { stroke: var(--sd-tick); }
 .sd-cross { stroke: var(--sd-cross); }
 .sd-node { fill: var(--sd-node); stroke: var(--sd-node-line); }
 .sd-node.is-hot { stroke: var(--sd-hot-line); }
 .sd-dot { fill: var(--sd-dot); }
-.sd-dot.is-hot, .sd-packet { fill: var(--sd-packet); }
+.sd-dot.is-hot { fill: var(--sd-packet); }
 .sd-label { fill: var(--sd-label); }
 .sd-label.is-hot { fill: var(--sd-hot-label); }
 .sd-note { fill: var(--sd-note); }
-.sd-glow { stop-color: var(--sd-packet); }
+
+/* Packets. A run is as big as the drawing, so its translate percentages are drawing units
+   (x / 1440, y / 900), and the dots inside are sized in 1440ths of the drawing's width. */
+.sd__run { position: absolute; inset: 0; animation: sd-loop 14s linear infinite; }
+.sd__run--stub { opacity: 0.85; animation: sd-stub 3.6s linear infinite; }
+.sd__packet,
+.sd__glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.sd__packet { width: calc(100% * 4.8 / 1440); background: var(--sd-packet); }
+.sd__run--stub .sd__packet { width: calc(100% * 4 / 1440); }
+.sd__glow { width: calc(100% * 18 / 1440); background: radial-gradient(closest-side, color-mix(in srgb, var(--sd-packet) 45%, transparent), transparent); }
+@media (prefers-reduced-motion: reduce) { .sd__run { display: none; } }
+
+/* The loop path from SystemDiagram.jsx, with keyframes spaced by distance so the speed is even. */
+@keyframes sd-loop {
+  from { transform: translate(5.833%, 32.222%); }
+  41.005% { transform: translate(94.167%, 32.222%); }
+  41.444% { transform: translate(95.093%, 32.519%); }
+  41.808% { transform: translate(95.648%, 33.407%); }
+  42.247% { transform: translate(95.833%, 34.889%); }
+  48.759% { transform: translate(95.833%, 57.333%); }
+  49.197% { transform: translate(95.648%, 58.815%); }
+  49.562% { transform: translate(95.093%, 59.704%); }
+  50% { transform: translate(94.167%, 60%); }
+  91.005% { transform: translate(5.833%, 60%); }
+  91.444% { transform: translate(4.907%, 59.704%); }
+  91.808% { transform: translate(4.352%, 58.815%); }
+  92.247% { transform: translate(4.167%, 57.333%); }
+  98.759% { transform: translate(4.167%, 34.889%); }
+  99.197% { transform: translate(4.352%, 33.407%); }
+  99.562% { transform: translate(4.907%, 32.519%); }
+  to { transform: translate(5.833%, 32.222%); }
+}
+@keyframes sd-stub {
+  from { transform: translate(var(--x), var(--from)); }
+  to { transform: translate(var(--x), var(--to)); }
+}
 
 /* cqw resolves against the stage only for its children, so the head room lives here. */
 .hero__text { position: relative; z-index: 2; padding-top: 27cqw; }
@@ -1096,12 +1266,8 @@ a { color: inherit; text-decoration: none; }
   margin-top: -5px;
   border-radius: 3px;
   background: var(--signal);
-  transform: scaleX(0);
   transform-origin: left;
-  transition: transform 1.1s var(--ease-out);
 }
-.trace.is-visible .trace__bar { transform: scaleX(1); }
-@media (prefers-reduced-motion: reduce) { .trace__bar { transform: none; } }
 .trace__row--train .trace__bar { background: var(--train); }
 .trace__row--edu .trace__bar { background: var(--edu); }
 .trace__bar.is-live::after {
@@ -1195,6 +1361,9 @@ a { color: inherit; text-decoration: none; }
 .build__canvas {
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  /* The scenes are the heaviest thing on the page to lay out (hundreds of SVG text runs).
+     Skip them until they're near the screen. The box keeps its size from aspect-ratio. */
+  content-visibility: auto;
   background-color: #0f1520;
   background-image:
     radial-gradient(ellipse 70% 80% at 50% 45%, rgba(61, 220, 151, 0.06), transparent 70%),
@@ -1548,7 +1717,7 @@ a { color: inherit; text-decoration: none; }
 .copy-email svg { width: 12px; height: 12px; }
 .form__note a { color: var(--copy); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
 .form__note a:hover { color: var(--text); }
-.contact__sign { margin-top: 64px; text-align: left; font: 400 11.5px/1 var(--font-mono); color: var(--faint); }
+.contact__sign { margin-top: 64px; text-align: left; font: 400 11.5px/1 var(--font-mono); color: var(--quiet); }
 
 @media (max-width: 640px) {
   .field { grid-template-columns: 1fr; }
@@ -1598,10 +1767,63 @@ a { color: inherit; text-decoration: none; }
 
 /* ══════════════════════════════════════════════════════════════
    Motion
-   Hidden start states only exist when JS has confirmed motion is OK.
+   `.motion-ok` is set before first paint (index.html) unless reduced motion
+   is preferred. Everything here animates only opacity and transforms, so
+   the compositor runs it without repainting the page.
    ══════════════════════════════════════════════════════════════ */
-.motion-ok [data-reveal] { opacity: 0; transform: translate3d(0, 18px, 0); }
-.motion-ok [data-lines] .line > span { transform: translate3d(0, 105%, 0); }
+
+/* Hero entrance: plays with the first paint, no JavaScript involved. */
+@keyframes hero-fade { from { opacity: 0; } }
+@keyframes hero-rise { from { opacity: 0; transform: translateY(var(--rise, 14px)); } }
+@keyframes hero-line { from { transform: translateY(106%); } }
+.motion-ok .hero__frame { animation: hero-fade 1.6s var(--ease-p2) both; }
+.motion-ok .hero__diagram { animation: hero-fade 2.2s var(--ease-p1) 0.2s both; }
+.motion-ok .hero__portrait { --rise: 36px; animation: hero-rise 1.5s var(--ease-p3) 0.1s both; }
+.motion-ok .hero__name .line > span { animation: hero-line 1.3s var(--ease-p4) 0.35s both; }
+.motion-ok .hero__name .line + .line > span { animation-delay: 0.47s; }
+.motion-ok .hero__eyebrow { animation: hero-rise 0.9s var(--ease-p3) 0.8s both; }
+.motion-ok .hero__intro { animation: hero-rise 0.9s var(--ease-p3) 0.9s both; }
+.motion-ok .hero__actions { animation: hero-rise 0.9s var(--ease-p3) 1s both; }
+.motion-ok :is(.hero__caption, .hero__aside, .hero__scroll) { animation: hero-fade 1s var(--ease-p3) 1.05s both; }
+.motion-ok .hero__caption--right { animation-delay: 1.11s; }
+.motion-ok .hero__aside--left { animation-delay: 1.17s; }
+.motion-ok .hero__aside--right { animation-delay: 1.23s; }
+.motion-ok .hero__scroll { animation-delay: 1.29s; }
+
+/* As the hero scrolls away, the portrait drifts slower than the type. Driven by the scroll
+   position itself, off the main thread; browsers without scroll timelines just skip it. */
+@keyframes hero-drift-portrait { to { translate: 0 9%; } }
+@keyframes hero-drift-text { to { translate: 0 -60px; } }
+@supports (animation-timeline: scroll()) {
+  .motion-ok .hero__figure,
+  .motion-ok .hero__text {
+    animation: hero-drift-portrait linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 max(100svh, 640px);
+  }
+  .motion-ok .hero__text { animation-name: hero-drift-text; }
+}
+
+/* Regions scrolled out of view (lib/pauseOffscreen.js) pause their loops. The hero drift is
+   left alone: it follows the scroll position, and pausing it would knock it out of step. */
+[data-offscreen] :not(.hero__figure, .hero__text),
+[data-offscreen] ::before,
+[data-offscreen] ::after { animation-play-state: paused !important; }
+
+/* Scroll reveals (lib/reveal.js). Hidden states exist only once `.reveals` is on <html>,
+   and the transition lives on the revealed state so hiding is instant and off screen. */
+.reveals [data-reveal]:not([data-in]) { opacity: 0; translate: 0 18px; }
+.reveals [data-reveal][data-in] {
+  transition: opacity 0.95s var(--ease-p3) var(--reveal-delay, 0s), translate 0.95s var(--ease-p3) var(--reveal-delay, 0s);
+}
+.reveals [data-lines]:not([data-in]) .line > span { translate: 0 105%; }
+.reveals [data-lines][data-in] .line > span { transition: translate 1.15s var(--ease-p4) var(--reveal-delay, 0s); }
+.reveals [data-lines][data-in] .line:nth-child(2) > span { transition-delay: calc(var(--reveal-delay, 0s) + 0.1s); }
+.reveals [data-lines][data-in] .line:nth-child(3) > span { transition-delay: calc(var(--reveal-delay, 0s) + 0.2s); }
+
+/* Career trace: the bars grow once the figure is revealed. Each bar sets its own delay inline. */
+.reveals .trace:not([data-in]) .trace__bar { transform: scaleX(0); }
+.reveals .trace[data-in] .trace__bar { transition: transform 1.1s var(--ease-out); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

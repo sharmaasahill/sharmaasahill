@@ -1,20 +1,18 @@
-import { useRef } from 'react';
-import useInView from '../hooks/useInView';
+import { useMemo } from 'react';
+import useMonth from '../hooks/useMonth';
 import { trace } from '../data/portfolioData';
 
 /*
  * The career drawn like a distributed trace: one row per span on a shared time axis,
  * so overlaps and gaps are visible at a glance. Months are inclusive.
+ * The bars grow when the figure is revealed (`data-in`, see lib/reveal.js and index.css).
  */
 
-const NOW = new Date(); // page load is precise enough for a month-level chart
 const toIndex = (ym) => {
   const [y, m] = ym.split('-').map(Number);
   return y * 12 + (m - 1);
 };
 const START = toIndex(trace.start);
-const END = NOW.getFullYear() * 12 + NOW.getMonth();
-const TOTAL = END - START + 1;
 
 const KIND_LABEL = { work: 'work', train: 'training', edu: 'study' };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -28,32 +26,37 @@ function duration(months) {
 
 const fmt = (index) => `${MONTHS[index % 12]} ${Math.floor(index / 12)}`;
 
-const SPANS = trace.spans.map((s) => {
-  const from = toIndex(s.from);
-  const to = s.to ? toIndex(s.to) : END;
-  const months = to - from + 1;
-  return {
-    ...s,
-    live: !s.to,
-    left: ((from - START) / TOTAL) * 100,
-    width: Math.max((months / TOTAL) * 100, 1.4),
-    months,
-    range: `${fmt(from)} – ${s.to ? fmt(to) : 'now'}`,
-  };
-});
+// Positions as percentages of the axis, from the first span to `end` (the current month).
+function layout(end) {
+  const total = end - START + 1;
+  const spans = trace.spans.map((s) => {
+    const from = toIndex(s.from);
+    const to = s.to ? toIndex(s.to) : end;
+    const months = to - from + 1;
+    return {
+      ...s,
+      live: !s.to,
+      left: ((from - START) / total) * 100,
+      width: Math.max((months / total) * 100, 1.4),
+      months,
+      range: `${fmt(from)} – ${s.to ? fmt(to) : 'now'}`,
+    };
+  });
 
-// January of each year inside the window.
-const YEARS = [];
-for (let i = START; i <= END; i += 1) {
-  if (i % 12 === 0) YEARS.push({ year: i / 12, left: ((i - START) / TOTAL) * 100 });
+  // January of each year inside the window.
+  const years = [];
+  for (let i = START; i <= end; i += 1) {
+    if (i % 12 === 0) years.push({ year: i / 12, left: ((i - START) / total) * 100 });
+  }
+  return { spans, years };
 }
 
 export default function CareerTrace() {
-  const ref = useRef(null);
-  const inView = useInView(ref, '-10% 0px', { once: true });
+  const month = useMonth();
+  const { spans, years } = useMemo(() => layout(month), [month]);
 
   return (
-    <figure ref={ref} className={`trace${inView ? ' is-visible' : ''}`} data-reveal>
+    <figure className="trace" data-reveal>
       <figcaption className="trace__head">
         <span className="eyebrow">{trace.id}</span>
         <span className="trace__legend" aria-hidden="true">
@@ -66,7 +69,7 @@ export default function CareerTrace() {
       </figcaption>
 
       <div className="trace__axis" aria-hidden="true">
-        {YEARS.map((y) => (
+        {years.map((y) => (
           <span key={y.year} style={{ left: `${y.left}%` }}>
             {y.year}
           </span>
@@ -77,7 +80,7 @@ export default function CareerTrace() {
       </div>
 
       <ol className="trace__rows">
-        {SPANS.map((s, i) => (
+        {spans.map((s, i) => (
           <li key={s.label} className={`trace__row trace__row--${s.kind}`}>
             <span className="trace__label">
               {s.label}
@@ -87,7 +90,7 @@ export default function CareerTrace() {
               </span>
             </span>
             <span className="trace__lane" aria-hidden="true">
-              {YEARS.map((y) => (
+              {years.map((y) => (
                 <i key={y.year} className="trace__grid" style={{ left: `${y.left}%` }} />
               ))}
               <span

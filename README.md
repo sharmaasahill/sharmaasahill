@@ -93,6 +93,7 @@ delivery:    [Docker, GitHub Actions, Pytest, JUnit 5, Playwright]
 
 | year | credential |
 | :-- | :-- |
+| 2026 | AWS Certified AI Practitioner (AIF-C01) |
 | 2026 | AWS Certified Cloud Practitioner (CLF-C02) |
 | 2024 | AWS Academy Cloud Foundations, Architecting & Security |
 | 2024 | Amazon ML Summer School · selected participant |

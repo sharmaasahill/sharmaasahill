@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { gsap, ScrollTrigger } from './lib/gsap';
+import { Suspense, useEffect } from 'react';
+import { pauseOffscreen } from './lib/pauseOffscreen';
+import { startReveals } from './lib/reveal';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -10,54 +11,43 @@ import Credentials from './components/Credentials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
+/*
+ * Nothing here ever suspends. The boundaries split hydration of the prerendered page into
+ * one piece per section, so React hydrates the nav and hero first and the rest in separate
+ * short tasks instead of one long one (and a click jumps its section to the front).
+ */
+const Section = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
+
 export default function App() {
-  // Scroll reveals. Start states live in CSS under .motion-ok (set in index.html),
-  // so nothing is hidden for visitors who prefer reduced motion.
-  useEffect(() => {
-    if (!document.documentElement.classList.contains('motion-ok')) return undefined;
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.batch('[data-reveal]', {
-        start: 'top 92%',
-        once: true,
-        onEnter: (batch) =>
-          gsap.to(batch, { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out', stagger: 0.07, overwrite: true }),
-      });
-
-      gsap.utils.toArray('[data-lines]').forEach((heading) => {
-        gsap.to(heading.querySelectorAll('.line > span'), {
-          y: 0,
-          duration: 1.15,
-          ease: 'power4.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger: heading, start: 'top 90%', once: true },
-        });
-      });
-    });
-
-    // Fonts and images change layout after first paint; re-measure trigger points.
-    const refresh = () => ScrollTrigger.refresh();
-    document.fonts?.ready.then(refresh);
-    window.addEventListener('load', refresh);
-
-    return () => {
-      window.removeEventListener('load', refresh);
-      ctx.revert();
-    };
-  }, []);
+  // Scroll reveals (lib/reveal.js). The hero's entrance is pure CSS, so it starts with the first paint.
+  useEffect(() => startReveals(), []);
+  // The regions with endless loops: the hero, the top bar, and the footer's wordmark.
+  useEffect(() => pauseOffscreen(['#intro', '#topbar', '#site-footer']), []);
 
   return (
     <>
       <Navbar />
       <main id="main">
         <Hero />
-        <About />
-        <Experience />
-        <Projects />
-        <Credentials />
-        <Contact />
+        <Section>
+          <About />
+        </Section>
+        <Section>
+          <Experience />
+        </Section>
+        <Section>
+          <Projects />
+        </Section>
+        <Section>
+          <Credentials />
+        </Section>
+        <Section>
+          <Contact />
+        </Section>
       </main>
-      <Footer />
+      <Section>
+        <Footer />
+      </Section>
     </>
   );
 }

@@ -65,6 +65,20 @@ const QUALITY = [
   ['brightness', '131', 'in range'],
 ];
 
+// The 512 embedding cells never change, so they are built once rather than on every step.
+const EMBEDDING_CELLS = EMBEDDING.map((v, i) => (
+  <rect
+    key={i}
+    x={360 + (i % 32) * 7.5}
+    y={76 + Math.floor(i / 32) * 7.5}
+    width="6.4"
+    height="6.4"
+    rx="1"
+    fill={v >= 0 ? C.signal : C.blue}
+    opacity={(0.14 + Math.abs(v) * 0.8).toFixed(2)}
+  />
+));
+
 const MATCHES = [
   ['sahil', 0.83],
   ['aman', 0.29],
@@ -258,18 +272,7 @@ export default function FaceScene({ step, compact }) {
         <Text x={360} y={60} size={10.5} color={C.label}>
           arcface · 512-d embedding
         </Text>
-        {EMBEDDING.map((v, i) => (
-          <rect
-            key={i}
-            x={360 + (i % 32) * 7.5}
-            y={76 + Math.floor(i / 32) * 7.5}
-            width="6.4"
-            height="6.4"
-            rx="1"
-            fill={v >= 0 ? C.signal : C.blue}
-            opacity={(0.14 + Math.abs(v) * 0.8).toFixed(2)}
-          />
-        ))}
+        {EMBEDDING_CELLS}
         {step === 3 && <rect key="cover" x="356" y="72" width="250" height="128" fill={C.node} className="at-reveal" />}
         <Text x={360} y={222} size={10}>
           [ 0.031, −0.112, 0.087, … 0.054 ]
